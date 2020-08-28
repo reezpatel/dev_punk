@@ -1,0 +1,27 @@
+{
+  "name": "@devpunk/website",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "watch": "parcel public/index.html"
+  },
+  "dependencies": {
+    "@devpunk/types": "1.0.0",
+    "@types/react": "^16.9.46",
+    "@types/react-router-dom": "^5.1.5",
+    "@types/styled-components": "^5.1.2",
+    "apollo-boost": "^0.4.9",
+    "app": "^0.1.0",
+    "constate": "^2.0.0",
+    "graphql": "^15.3.0",
+    "graphql-tag": "^2.11.0",
+    "react": "^16.13.1",
+    "react-icons": "^3.10.0",
+    "react-router-dom": "^5.2.0",
+    "styled-components": "^5.1.1"
+  },
+  "devDependencies": {
+    "sass": "^1.26.10"
+  }
+}
