@@ -3,8 +3,12 @@ import styled from 'styled-components';
 import Header from '../../components/Header';
 import AdminWebsites from '../../components/Admin/Websites';
 import WebsiteDetails from '../../components/Admin/WebsiteDetails';
-import { getAllWebsites } from '../../gql';
+import { getAllWebsites, deleteWebsite } from '../../gql';
 import { Website } from '@devpunk/types';
+import { useHistory } from 'react-router-dom';
+import { useUserContext } from '../../context/UserContext';
+import Modal from '../../components/Modal';
+import WebsiteEdit from '../../components/Admin/WebsiteEdit';
 
 const Container = styled.div`
   display: grid;
@@ -14,7 +18,12 @@ const Container = styled.div`
 
 const AdminPage = () => {
   const [websites, setWebsites] = useState<Website[]>([]);
+  const [isNewModalOpen, setNewModalOpen] = useState(false);
   const [selected, setSelected] = useState(-1);
+  const [isEditMode, setEditMode] = useState(false);
+
+  const user = useUserContext();
+  const history = useHistory();
 
   const loadWebsites = async () => {
     const sites = await getAllWebsites();
@@ -26,6 +35,9 @@ const AdminPage = () => {
   }, [websites]);
 
   useEffect(() => {
+    if (!user.user.isLoggedIn) {
+      history.replace('/');
+    }
     loadWebsites();
   }, []);
 
@@ -33,17 +45,63 @@ const AdminPage = () => {
     setSelected(index);
   };
 
+  const handleModalClose = () => {
+    setNewModalOpen(false);
+    loadWebsites();
+  };
+
+  const handleModalOpen = () => {
+    setEditMode(false);
+    setNewModalOpen(true);
+  };
+
+  const handleWebsiteEdit = () => {
+    setEditMode(true);
+    setNewModalOpen(true);
+  };
+
+  const handleWebsiteDelete = (website: Website) => {
+    deleteWebsite(website._id)
+      .then((res) => {
+        if (res.deleteWebsite.success) {
+          loadWebsites();
+        } else {
+          console.log('Delete Failed', res);
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
+
   return (
     <Fragment>
       <Header />
+      <Modal
+        onClose={handleModalClose}
+        title="Add New Website"
+        isOpen={isNewModalOpen}
+      >
+        <WebsiteEdit
+          editMode={isEditMode}
+          onClose={handleModalClose}
+          website={websites[selected]}
+        />
+      </Modal>
       <Container>
         <AdminWebsites
           websites={websites}
-          loadWebsites={loadWebsites}
+          onNew={handleModalOpen}
           onSiteSelection={handleSelection}
           selected={selected}
         />
-        {websites[selected] && <WebsiteDetails website={websites[selected]} />}
+        {websites[selected] && (
+          <WebsiteDetails
+            onDelete={handleWebsiteDelete}
+            onEdit={handleWebsiteEdit}
+            website={websites[selected]}
+          />
+        )}
       </Container>
     </Fragment>
   );

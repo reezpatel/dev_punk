@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row, TextInput, SelectInput, Loader } from '../../UI';
 import { Website } from '@devpunk/types';
 import { RiAlarmWarningLine } from 'react-icons/ri';
-import { addNewWebsite } from '../../../gql';
+import { addNewWebsite, editWebsite } from '../../../gql';
 import {
   Container,
   Logo,
@@ -29,15 +29,57 @@ const defaultWebsite = {
 
 interface WebsiteEditProps {
   onClose: () => void;
+  website?: Website;
+  editMode: boolean;
 }
 
 type WebsiteEdit = (props: WebsiteEditProps) => JSX.Element;
 
-const WebsiteEdit: WebsiteEdit = ({ onClose }) => {
+const WebsiteEdit: WebsiteEdit = ({ onClose, website: _website, editMode }) => {
   const [image, setImage] = useState<string>(null);
   const [website, setWebsite] = useState<Website>(defaultWebsite);
   const [view, setView] = useState<'HIDDEN' | 'LOADING' | 'ERROR'>('HIDDEN');
   const [error, setError] = useState('');
+
+  const convertBlobToBase64: (Blob) => Promise<string> = (blob) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = () => {
+        resolve(reader.result as string);
+      };
+      reader.readAsDataURL(blob);
+    });
+
+  const updateImage = async () => {
+    if (!_website._id || !editMode) {
+      setImage(null);
+      return;
+    }
+
+    const response = await fetch(
+      `http://localhost:3000/api/images/website/${_website._id}`
+    );
+
+    setImage(await convertBlobToBase64(await response.blob()));
+  };
+
+  useEffect(() => {
+    if (_website && editMode) {
+      setWebsite({
+        _id: _website._id,
+        name: _website.name,
+        type: _website.type,
+        website: _website.website,
+        order: _website.order,
+        feed: _website.feed,
+        active: _website.active,
+      });
+    } else {
+      setWebsite(defaultWebsite);
+    }
+    updateImage();
+  }, [_website, editMode]);
 
   const handleInput = (field: string) => (value: string) => {
     setWebsite({
@@ -62,10 +104,12 @@ const WebsiteEdit: WebsiteEdit = ({ onClose }) => {
   };
 
   const handleSaveButtonClicked = () => {
+    const promise = editMode ? editWebsite(website) : addNewWebsite(website);
     setView('LOADING');
-    addNewWebsite(website)
+    promise
       .then((res) => {
-        const documentId = res.addWebsite._id;
+        console.log(res.editWebsite);
+        const documentId = editMode ? res.editWebsite._id : res.addWebsite._id;
 
         if (image) {
           fetch('http://localhost:3000/api/images', {
@@ -84,6 +128,7 @@ const WebsiteEdit: WebsiteEdit = ({ onClose }) => {
         }
       })
       .catch((e) => {
+        console.log(e);
         setView('ERROR');
         setError(e.message);
       });

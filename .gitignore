@@ -110,3 +110,5 @@ dist
 **/build
 **/.cache
 **/dist
+
+.kubemqctl.yaml

@@ -33,11 +33,27 @@ const FeedsTitle = styled.p`
   color: #3c3c3c;
 `;
 
-const FeedsMeta = styled.p`
+const FeedsMeta = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 25px;
   margin-top: 18px;
+`;
+
+const FeedMetaTitle = styled.p`
   font-size: 12px;
   color: #909090;
   font-weight: 400;
+`;
+
+const FeedMetaAction = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100px;
+  height: 25px;
+  &:hover {
+    background-color: #dcdbdb;
+  }
 `;
 
 export {
@@ -48,4 +64,6 @@ export {
   FeedDetails,
   FeedsTitle,
   FeedsMeta,
+  FeedMetaTitle,
+  FeedMetaAction,
 };

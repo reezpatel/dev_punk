@@ -23,7 +23,7 @@ import { Website } from '@devpunk/types';
 
 interface AdminWebsitesProps {
   websites: Website[];
-  loadWebsites: () => Promise<void>;
+  onNew: () => void;
   onSiteSelection: (index: number) => void;
   selected: number;
 }
@@ -32,20 +32,10 @@ type AdminWebsites = (props: AdminWebsitesProps) => JSX.Element;
 
 const AdminWebsites: AdminWebsites = ({
   websites,
-  loadWebsites,
   onSiteSelection,
   selected,
+  onNew,
 }) => {
-  const [isNewModalOpen, setNewModalOpen] = useState(false);
-
-  const handleModalClose = () => {
-    setNewModalOpen(false);
-    loadWebsites();
-  };
-  const handleModalOpen = () => {
-    setNewModalOpen(true);
-  };
-
   const handleWebsiteClick = (index) => () => {
     onSiteSelection(index);
   };
@@ -54,14 +44,7 @@ const AdminWebsites: AdminWebsites = ({
     <Container>
       <HeadSection>
         <Heading>Websites</Heading>
-        <Modal
-          onClose={handleModalClose}
-          title="Add New Website"
-          isOpen={isNewModalOpen}
-        >
-          <WebsiteEdit onClose={handleModalClose} />
-        </Modal>
-        <NewButton onClick={handleModalOpen}>
+        <NewButton onClick={onNew}>
           <FaPlus color="white" fontSize="18" />
         </NewButton>
       </HeadSection>

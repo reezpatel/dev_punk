@@ -10,6 +10,7 @@ import cors from 'fastify-cors';
 import images from './plugins/images';
 import ingestion from './plugins/ingestion';
 import pubsub from './plugins/pubsub';
+import redis from './plugins/redis';
 
 const server: FastifyInstance<
   Server,
@@ -27,6 +28,7 @@ server.register(graphql);
 server.register(rss);
 server.register(ingestion);
 server.register(pubsub);
+server.register(redis);
 
 server.register(cors, {
   origin: ['http://localhost:1234'],

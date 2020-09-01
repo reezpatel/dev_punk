@@ -45,6 +45,7 @@ const Title = styled.h5`
 
 const ModalContent = styled.div`
   padding: 15px 25px;
+  flex-grow: 1;
 `;
 
 export { ModalContent, Title, CloseButton, Header, Container, Wrapper };

@@ -9,8 +9,12 @@ import {
   FeedDetails,
   FeedsTitle,
   FeedsMeta,
+  FeedMetaTitle,
+  FeedMetaAction,
 } from './style';
 import { getRelativeTime } from '../../utils';
+import { FeedMetaIcon } from '../Admin/FeedsList/style';
+import { IoMdHeartEmpty, IoMdHeart } from 'react-icons/io';
 
 const BATCH_SIZE = 1;
 
@@ -43,7 +47,12 @@ const FeedsGrid = ({ website, columns }) => {
 
     const entries = await getFeeds(page, website);
     setPage(page + 1);
-    setFeeds([...feeds, ...entries]);
+
+    if (page === 1) {
+      setFeeds(entries);
+    } else {
+      setFeeds([...feeds, ...entries]);
+    }
 
     lock.current = false;
   };
@@ -92,9 +101,13 @@ const FeedsGrid = ({ website, columns }) => {
 
   useEffect(() => {
     setData(getEmptyData(columns));
-    setPage(1);
     loadFeeds();
-  }, [website, columns]);
+  }, [page]);
+
+  useEffect(() => {
+    setData(getEmptyData(columns));
+    setPage(1);
+  }, [columns, website]);
 
   const handleFeedClick = (id) => () => {
     window.open(`http://localhost:3000/r/${id}`);
@@ -117,8 +130,13 @@ const FeedsGrid = ({ website, columns }) => {
               <FeedDetails>
                 <FeedsTitle>{feed.title}</FeedsTitle>
                 <FeedsMeta>
-                  {getRelativeTime(feed.publishedAt || feed.createdAt)}
-                  {feed.author ? `&bull; ${feed.author}` : ''}
+                  <FeedMetaTitle>
+                    {getRelativeTime(feed.publishedAt || feed.createdAt)}
+                    {feed.author ? ` • ${feed.author}` : ''}
+                  </FeedMetaTitle>
+                  <FeedMetaAction>
+                    <IoMdHeartEmpty />
+                  </FeedMetaAction>
                 </FeedsMeta>
               </FeedDetails>
             </FeedBlock>

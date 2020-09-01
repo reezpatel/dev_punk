@@ -13,7 +13,7 @@ const Title = styled.h3`
 
 const WebsiteItem = styled.div<{ selected: boolean }>`
   display: grid;
-  grid-template-columns: 30px auto;
+  grid-template-columns: 30px auto 24px;
   column-gap: 10px;
   align-items: center;
   cursor: pointer;
@@ -35,4 +35,23 @@ const WebsiteText = styled.span`
   font-weight: bold;
 `;
 
-export { WebsiteContainer, Title, WebsiteItem, WebsiteIcon, WebsiteText };
+const WebsiteAction = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100px;
+  height: 24px;
+
+  &:hover {
+    background-color: #dcdbdb;
+  }
+`;
+
+export {
+  WebsiteContainer,
+  Title,
+  WebsiteItem,
+  WebsiteIcon,
+  WebsiteText,
+  WebsiteAction,
+};

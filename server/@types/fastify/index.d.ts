@@ -33,5 +33,10 @@ declare module 'fastify' {
     rss: {
       getFeeds: (string, string) => Promise<IFeeds[]>;
     };
+    redis: {
+      generateUserToken: (id: string) => Promise<string>;
+      validateUserToken: (id: string, token: string) => Promise<boolean>;
+      destroyUserToken: (token: string) => Promise<number>;
+    };
   }
 }

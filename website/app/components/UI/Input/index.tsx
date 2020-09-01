@@ -29,7 +29,7 @@ const TextInput: TextInput = ({ label, value, onChange }) => {
     if (value) {
       setShowPlaceholder(false);
     }
-  }, []);
+  }, [value]);
 
   return (
     <InputContainer>

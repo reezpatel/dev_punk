@@ -18,4 +18,10 @@ interface Feeds {
   website: Website;
 }
 
-export { Website, Feeds };
+interface User {
+  name: string;
+  favorites: Feeds[];
+  pins: Website[];
+}
+
+export { Website, Feeds, User };

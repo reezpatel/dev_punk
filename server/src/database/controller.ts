@@ -61,6 +61,25 @@ class DBController {
     }
   }
 
+  async editWebsite(website: any) {
+    try {
+      const doc = await this.Websites.findOne({ _id: website._id });
+
+      if (!doc) {
+        return {
+          error: `Website doesn't exist`,
+        };
+      }
+
+      const { _id, ...rest } = website;
+      await this.Websites.updateOne({ _id }, rest);
+
+      return this.Websites.findOne({ _id: website._id });
+    } catch (e) {
+      return this.handleError(e);
+    }
+  }
+
   async addFeeds(feeds: any) {
     const insertableFeed = [];
     try {
@@ -106,7 +125,29 @@ class DBController {
     const ids = feeds.map(({ website }) => mongoose.Types.ObjectId(website));
     const websites = await this.Websites.where('_id').in(ids);
 
-    console.log(websites, ids);
+    const mapping = {};
+    websites.forEach((website) => {
+      mapping[website._id] = website;
+    });
+
+    return ids.map((id) => mapping[id]);
+  }
+
+  async resolveFavorites(favorites: string[]) {
+    const ids = favorites.map((id) => mongoose.Types.ObjectId(id));
+    const feeds = await this.Feeds.where('_id').in(ids);
+
+    const mapping = {};
+    feeds.forEach((website) => {
+      mapping[website._id] = website;
+    });
+
+    return ids.map((id) => mapping[id]);
+  }
+
+  async resolvePins(pins: string[]) {
+    const ids = pins.map((id) => mongoose.Types.ObjectId(id));
+    const websites = await this.Websites.where('_id').in(ids);
 
     const mapping = {};
     websites.forEach((website) => {
@@ -114,6 +155,37 @@ class DBController {
     });
 
     return ids.map((id) => mapping[id]);
+  }
+
+  async updateFavorites(id: string, feeds: string[]) {
+    const user = await this.Users.findOne({ _id: id });
+    try {
+      if (!user) {
+        throw new Error("User doesn't exist");
+      }
+      user.favorites = feeds;
+
+      this.Users.updateOne({ _id: id }, user);
+      return user;
+    } catch (e) {
+      return this.handleError(e);
+    }
+  }
+
+  async updatePins(id: string, website: string[]) {
+    const user = await this.Users.findOne({ _id: id });
+    try {
+      if (!user) {
+        throw new Error("User doesn't exist");
+      }
+      user.pins = website;
+
+      this.Users.updateOne({ _id: id }, user);
+
+      return user;
+    } catch (e) {
+      return this.handleError(e);
+    }
   }
 
   private async getCompleteUrl(feed: IFeeds) {
@@ -131,6 +203,62 @@ class DBController {
     }
 
     return '';
+  }
+
+  async getUser(email: string, name?: string): Promise<IUser> {
+    const user = await this.Users.findOne({ email });
+
+    if (!user) {
+      const newUser = new this.Users({
+        _id: mongoose.Types.ObjectId(),
+        email,
+        name,
+        favorites: [],
+        pins: [],
+      });
+
+      await newUser.save();
+
+      return this.getUser(email);
+    }
+
+    return user;
+  }
+
+  async getUserById(id: string) {
+    try {
+      const user = await this.Users.findOne({ _id: id });
+
+      if (!user) {
+        throw new Error("User doesn't exists");
+      }
+
+      return user;
+    } catch (e) {
+      return this.handleError(e);
+    }
+  }
+
+  async deleteWebsite(id: string) {
+    try {
+      const response = await this.Websites.deleteOne({ _id: id });
+      return {
+        success: response.deletedCount === 1,
+      };
+    } catch (e) {
+      return this.handleError(e);
+    }
+  }
+
+  async deleteFeed(id: string) {
+    try {
+      const response = await this.Feeds.deleteOne({ _id: id });
+      return {
+        success: response.deletedCount === 1,
+      };
+    } catch (e) {
+      return this.handleError(e);
+    }
   }
 }
 

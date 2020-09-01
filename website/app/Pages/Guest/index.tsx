@@ -6,6 +6,7 @@ import FeedsGrid from '../../components/FeedsGrid';
 import { Website } from '@devpunk/types';
 import { getAllWebsites } from '../../gql';
 import SearchBar from '../../components/SearchBar';
+import { useUserContext } from '../../context/UserContext';
 
 const Container = styled.div`
   display: grid;
@@ -21,8 +22,23 @@ const GuestPage = () => {
   const [websites, setWebsite] = useState<Website[]>([]);
   const [selected, setSelected] = useState(-1);
 
+  const user = useUserContext();
+
   const loadWebsites = async () => {
     const sites = await getAllWebsites();
+
+    if (user.user.isLoggedIn) {
+      sites.push({
+        _id: 'favs',
+        name: 'Favorites',
+        type: 'RSS',
+        order: -1,
+        feed: '',
+        active: true,
+        website: '',
+      });
+    }
+
     setWebsite(sites);
     setSelected(0);
   };
@@ -31,11 +47,23 @@ const GuestPage = () => {
     loadWebsites();
   }, []);
 
+  const handleWebsiteSelection = (index) => {
+    console.log('here');
+    setSelected(index);
+  };
+
   return (
     <Fragment>
       <Header />
       <Container>
-        <WebsiteList selected={selected} websites={websites}></WebsiteList>
+        <WebsiteList
+          onChange={handleWebsiteSelection}
+          selected={selected}
+          websites={websites}
+          pinned={['favs']}
+          showPins={user.user.isLoggedIn}
+          onPinsChange={() => {}}
+        ></WebsiteList>
         <FeedContainer>
           <SearchBar></SearchBar>
           {websites[selected] && (

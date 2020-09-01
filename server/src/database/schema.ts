@@ -68,13 +68,19 @@ const FeedsSchema = new Schema({
 
 interface IUser extends Document {
   name: string;
+  email: string;
   favorites: string[];
-  pins: [];
+  pins: string[];
 }
 
 const UserSchema = new Schema({
   _id: {
     type: ObjectId,
+  },
+  email: {
+    type: String,
+    index: true,
+    unique: true,
   },
   name: String,
   favorites: [String],

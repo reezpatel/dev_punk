@@ -16,11 +16,21 @@ import FeedsList from '../FeedsList';
 
 interface WebsiteDetailsProps {
   website: Website;
+  onEdit: (website: Website) => void;
+  onDelete: (website: Website) => void;
 }
 
 type WebsiteDetails = (props: WebsiteDetailsProps) => JSX.Element;
 
-const WebsiteDetails: WebsiteDetails = ({ website }) => {
+const WebsiteDetails: WebsiteDetails = ({ website, onEdit, onDelete }) => {
+  const handleOnEdit = () => {
+    onEdit(website);
+  };
+
+  const handleOnDelete = () => {
+    onDelete(website);
+  };
+
   return (
     <Container>
       <WebsiteInfo>
@@ -30,10 +40,10 @@ const WebsiteDetails: WebsiteDetails = ({ website }) => {
             <WebsiteLink>{website.website}</WebsiteLink>
           </WebsiteDetailsContainer>
           <WebsiteActions>
-            <WebsiteActionEdit>
+            <WebsiteActionEdit onClick={handleOnEdit}>
               <FiEdit3 color="white" fontSize="18" />
             </WebsiteActionEdit>
-            <WebsiteActionDelete>
+            <WebsiteActionDelete onClick={handleOnDelete}>
               <FiTrash2 color="white" fontSize="18" />
             </WebsiteActionDelete>
           </WebsiteActions>

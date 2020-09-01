@@ -14,7 +14,7 @@ import {
   FeedActionDelete,
 } from './style';
 import { Website, Feeds } from '@devpunk/types';
-import { getFeeds } from '../../../gql';
+import { getFeeds, deleteFeed } from '../../../gql';
 import { Row } from '../../UI';
 import { MdTimer } from 'react-icons/md';
 import { FiPenTool, FiTrash2 } from 'react-icons/fi';
@@ -33,17 +33,34 @@ const FeedsList: FeedsList = ({ website }) => {
 
   const loadFeeds = async () => {
     const data = await getFeeds(page, website._id);
-    setPage(page + 1);
-    setFeeds([...feeds, ...data]);
+    if (page === 1) {
+      setFeeds(data);
+    } else {
+      setFeeds([...feeds, ...data]);
+    }
   };
 
   useEffect(() => {
     loadFeeds();
-  }, []);
+  }, [website, page]);
+
+  const handleFeedsDelete = (feed: Feeds) => () => {
+    deleteFeed(feed._id)
+      .then((res) => {
+        if (res.deleteFeed.success) {
+          setFeeds(feeds.filter(({ _id }) => _id !== feed._id));
+        } else {
+          console.log('Delete Failed', res);
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
 
   return (
     <Container>
-      {feeds.length &&
+      {feeds.length !== 0 &&
         feeds.map((feed) => (
           <FeedsContainer key={feed._id}>
             <Row size="2fr 8fr 1fr" gap="20px">
@@ -97,7 +114,7 @@ const FeedsList: FeedsList = ({ website }) => {
               </FeedDetails>
 
               <FeedActionContainer>
-                <FeedActionDelete>
+                <FeedActionDelete onClick={handleFeedsDelete(feed)}>
                   <FiTrash2 color="white" fontSize="18" />
                 </FeedActionDelete>
               </FeedActionContainer>
