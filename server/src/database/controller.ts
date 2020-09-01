@@ -65,6 +65,8 @@ class DBController {
     try {
       const doc = await this.Websites.findOne({ _id: website._id });
 
+      console.log('ffsfs');
+
       if (!doc) {
         return {
           error: `Website doesn't exist`,
@@ -130,7 +132,7 @@ class DBController {
       mapping[website._id] = website;
     });
 
-    return ids.map((id) => mapping[id]);
+    return ids.map((id) => mapping[`${id}`]);
   }
 
   async resolveFavorites(favorites: string[]) {
@@ -142,7 +144,7 @@ class DBController {
       mapping[website._id] = website;
     });
 
-    return ids.map((id) => mapping[id]);
+    return ids.map((id) => mapping[`${id}`]);
   }
 
   async resolvePins(pins: string[]) {
@@ -154,7 +156,7 @@ class DBController {
       mapping[website._id] = website;
     });
 
-    return ids.map((id) => mapping[id]);
+    return ids.map((id) => mapping[`${id}`]);
   }
 
   async updateFavorites(id: string, feeds: string[]) {
