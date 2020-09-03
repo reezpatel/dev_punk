@@ -1,16 +1,10 @@
-import fastify, { FastifyInstance } from 'fastify';
-import { Server, IncomingMessage, ServerResponse } from 'http';
+import { IncomingMessage, Server, ServerResponse } from 'http';
+import cors from 'fastify-cors';
 import fastifyEnv from 'fastify-env';
+import fastify, { FastifyInstance } from 'fastify';
+import { database, graphql, storage, rss, redis, pubsub } from './services';
 import config from './plugins/config';
 import routes from './routes';
-import graphql from './graphql';
-import database from './database';
-import rss from './rss';
-import cors from 'fastify-cors';
-import images from './plugins/images';
-import ingestion from './plugins/ingestion';
-import pubsub from './plugins/pubsub';
-import redis from './plugins/redis';
 
 const server: FastifyInstance<
   Server,
@@ -18,40 +12,48 @@ const server: FastifyInstance<
   ServerResponse
 > = fastify({
   logger: true,
-  pluginTimeout: 1000000,
+  pluginTimeout: 1000000
 });
 
 server.register(fastifyEnv, config);
+server.register(storage);
 server.register(database);
-server.register(routes);
+server.register(routes, { prefix: 'api/v1' });
 server.register(graphql);
 server.register(rss);
-server.register(ingestion);
-server.register(pubsub);
 server.register(redis);
+server.register(pubsub);
 
 server.register(cors, {
-  origin: ['http://localhost:1234'],
+  origin: ['http://localhost:1234']
 });
-server.register(images);
+
+const EXIT_CODE = 1;
 
 const start = async () => {
   try {
-    await server.listen(3000, '0.0.0.0');
-    server.log.info(`Server is listening at ${3000}`);
+    await server.listen(server.config.SERVER_PORT, '0.0.0.0');
+    server.log.info(`Server is listening at ${server.config.SERVER_PORT}`);
   } catch (err) {
-    console.log(err);
     server.log.error(err);
-    process.exit(1);
+    // eslint-disable-next-line no-process-exit
+    process.exit(EXIT_CODE);
   }
 };
 
 process.on('uncaughtException', (error) => {
-  console.error(error);
+  server.log.error({
+    message: error.message,
+    module: 'Main:: uncaughtException',
+    stack: error.stack
+  });
 });
 
 process.on('unhandledRejection', (error) => {
-  console.error(error);
+  server.log.error({
+    message: error,
+    module: 'Main:: unhandledRejection'
+  });
 });
 
 start();

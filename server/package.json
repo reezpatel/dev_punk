@@ -6,13 +6,15 @@
   "scripts": {
     "watch:ts": "tsc --w",
     "watch:build": "LOG_LEVEL=debug nodemon --watch build build/index.js | pino-pretty -c ",
-    "watch": "concurrently 'npm:watch:*' --kill-others"
+    "watch": "concurrently 'npm:watch:*' --kill-others",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@types/ioredis": "^4.17.3",
     "@types/mongoose": "^5.7.36",
     "axios": "^0.20.0",
     "cheerio": "^1.0.0-rc.3",
+    "eslint-plugin-import": "^2.22.0",
     "fastify": "^3.2.0",
     "fastify-cors": "^4.1.0",
     "fastify-env": "^2.0.1",

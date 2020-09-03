@@ -9,13 +9,14 @@ interface Website {
 }
 
 interface Feeds {
-  _id: string;
+  _id: string | any;
   title: string;
   createdAt: string;
   publishedAt: string;
   author: string;
   tags: string[];
   website: Website;
+  url?: string;
 }
 
 interface User {

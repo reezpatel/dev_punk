@@ -1,40 +1,68 @@
+interface Config {
+  MONGODB_PASSWORD: string;
+  MONGODB_USERNAME: string;
+  MONGODB_DB_NAME: string;
+  MONGODB_AUTH_DB: string;
+  MONGODB_HOST: string;
+  MONGODB_PORT: number;
+  DATA_DIR: string;
+  SERVER_PORT: number;
+  GITHUB_LOGIN_CLIENT_ID: string;
+  GITHUB_LOGIN_CLIENT_SECRET: string;
+  APPLICATION_URL: string;
+}
+
 const schema = {
-  type: 'object',
-  required: ['MONGODB_PASSWORD', 'MONGODB_USERNAME', 'MONGODB_DB_NAME'],
   properties: {
-    MONGODB_PASSWORD: {
-      type: 'string',
-    },
-    MONGODB_USERNAME: {
-      type: 'string',
-    },
-    MONGODB_DB_NAME: {
-      type: 'string',
-    },
-    MONGODB_AUTH_DB: {
-      type: 'string',
-      default: 'admin',
-    },
-    MONGODB_HOST: {
-      type: 'string',
-      default: 'localhost',
-    },
-    MONGODB_PORT: {
-      type: 'number',
-      default: 27017,
+    APPLICATION_URL: {
+      type: 'string'
     },
     DATA_DIR: {
-      type: 'string',
+      type: 'string'
     },
+    GITHUB_LOGIN_CLIENT_ID: {
+      type: 'string'
+    },
+    GITHUB_LOGIN_CLIENT_SECRET: {
+      type: 'string'
+    },
+    MONGODB_AUTH_DB: {
+      default: 'admin',
+      type: 'string'
+    },
+    MONGODB_DB_NAME: {
+      type: 'string'
+    },
+    MONGODB_HOST: {
+      default: 'localhost',
+      type: 'string'
+    },
+    MONGODB_PASSWORD: {
+      type: 'string'
+    },
+    MONGODB_PORT: {
+      default: 27017,
+      type: 'number'
+    },
+    MONGODB_USERNAME: {
+      type: 'string'
+    },
+    SERVER_PORT: {
+      default: '3000',
+      type: 'number'
+    }
   },
+  required: ['MONGODB_PASSWORD', 'MONGODB_USERNAME', 'MONGODB_DB_NAME'],
+  type: 'object'
 };
 
 const option = {
-  schema: schema,
   dotenv: {
-    path: `${__dirname}/../../../.env`,
     debug: true,
+    path: `${__dirname}/../../../.env`
   },
+  schema
 };
 
 export default option;
+export { Config };
