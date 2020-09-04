@@ -1,6 +1,6 @@
 import { URLSearchParams } from 'url';
-import fp from 'fastify-plugin';
 import axios from 'axios';
+import { FastifyPluginCallback } from 'fastify';
 
 const FIRST_INDEX = 1;
 
@@ -44,7 +44,11 @@ const getAccessTokenFromGithub = async (clientId, clientSecret, code) => {
   return [accessToken, type];
 };
 
-const authHandlers = fp((fastify, _, next) => {
+const authHandlers: FastifyPluginCallback<Record<string, unknown>> = (
+  fastify,
+  _,
+  next
+) => {
   fastify.get('/validate', async (req, res) => {
     if (!req.headers.authorization?.startsWith('Bearer ')) {
       res.send(reply(false, '', 'Invalid Auth Header'));
@@ -86,6 +90,6 @@ const authHandlers = fp((fastify, _, next) => {
   });
 
   next();
-});
+};
 
 export default authHandlers;

@@ -6,6 +6,7 @@ interface Website {
   order: number;
   feed: string;
   active: boolean;
+  success?: boolean;
 }
 
 interface Feeds {
@@ -17,6 +18,7 @@ interface Feeds {
   tags: string[];
   website: Website;
   url?: string;
+  success?: boolean;
 }
 
 interface User {

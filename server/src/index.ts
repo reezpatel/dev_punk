@@ -19,10 +19,10 @@ server.register(fastifyEnv, config);
 server.register(storage);
 server.register(database);
 server.register(routes, { prefix: 'api/v1' });
-server.register(graphql);
 server.register(rss);
 server.register(redis);
 server.register(pubsub);
+server.register(graphql);
 
 server.register(cors, {
   origin: ['http://localhost:1234']
@@ -32,6 +32,7 @@ const EXIT_CODE = 1;
 
 const start = async () => {
   try {
+    await server.ready();
     await server.listen(server.config.SERVER_PORT, '0.0.0.0');
     server.log.info(`Server is listening at ${server.config.SERVER_PORT}`);
   } catch (err) {

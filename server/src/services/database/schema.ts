@@ -1,5 +1,5 @@
 import { Schema } from 'mongoose';
-import { URL_REGEX } from 'src/utils';
+import { URL_REGEX } from '../../utils';
 const { ObjectId } = Schema.Types;
 
 const MAX_ORDER_COUNT = 10000;

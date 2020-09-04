@@ -5,5 +5,8 @@
   "extends": ["../.eslintrc", "airbnb-typescript-prettier"],
   "parserOptions": {
     "project": "./website/tsconfig.json"
+  },
+  "rules": {
+    "no-underscore-dangle": "off"
   }
 }

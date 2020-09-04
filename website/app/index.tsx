@@ -6,7 +6,7 @@ import App from './app';
 import './styles.scss';
 
 ReactDOM.render(
-  <UserProvider isLoggedIn={false}>
+  <UserProvider name="" favorites={[]} pins={[]} isLoggedIn={false}>
     <App />
   </UserProvider>,
   document.getElementById('root')

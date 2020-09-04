@@ -1,4 +1,6 @@
 import React from 'react';
+import { Website } from '@devpunk/types';
+import { FiEdit3, FiTrash2 } from 'react-icons/fi';
 import {
   Container,
   WebsiteInfo,
@@ -7,11 +9,9 @@ import {
   WebsiteLink,
   WebsiteActions,
   WebsiteActionEdit,
-  WebsiteActionDelete,
+  WebsiteActionDelete
 } from './style';
 import { Row } from '../../UI';
-import { Website } from '@devpunk/types';
-import { FiEdit3, FiTrash2 } from 'react-icons/fi';
 import FeedsList from '../FeedsList';
 
 interface WebsiteDetailsProps {

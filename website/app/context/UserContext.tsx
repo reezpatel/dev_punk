@@ -1,4 +1,5 @@
-import React, { useState, useCallback, Fragment } from 'react';
+/* eslint-disable react/jsx-props-no-spreading */
+import React, { useState, useCallback } from 'react';
 import constate from 'constate';
 import { User, Feeds, Website } from '@devpunk/types';
 
@@ -19,44 +20,53 @@ const useUser = () => {
     isLoggedIn: false,
     favorites: [],
     pins: [],
-    name: '',
+    name: ''
   });
 
-  const login = useCallback((token: string) => {
-    window.localStorage.setItem('AUTH_TOKEN', token);
-    setUser({ ...user, isLoggedIn: true });
-  }, []);
+  const login = useCallback(
+    (token: string) => {
+      window.localStorage.setItem('AUTH_TOKEN', token);
+      setUser({ ...user, isLoggedIn: true });
+    },
+    [user]
+  );
 
   const logout = useCallback(() => {
+    // TODO Call Logout API
     window.localStorage.removeItem('AUTH_TOKEN');
     setUser({ ...user, isLoggedIn: false });
-  }, []);
+  }, [user]);
 
   const setFavorites = (favorites: Feeds[]) => {
+    // TODO: Update Favs in Server
     setUser({
       ...user,
-      favorites,
+      favorites
     });
   };
 
   const setPins = (pins: Website[]) => {
+    // TODO: Update Pins in Server
     setUser({
       ...user,
-      pins,
+      pins
     });
   };
 
   return { user, login, logout, setFavorites, setPins };
 };
 
-const [UserProvider, useUserContext] = constate<User, UserHook, []>(useUser);
+const [UserProvider, useUserContext] = constate<UserState, UserHook, []>(
+  useUser
+);
 
-const withUser = (Children: () => JSX.Element) => (props) => {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+const withUser = (Children: () => JSX.Element) => (props): JSX.Element => {
   const userProps = useUserContext();
   return (
-    <Fragment>
+    <>
       <Children {...props} {...userProps} />
-    </Fragment>
+    </>
   );
 };
 

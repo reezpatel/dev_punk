@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { IoMdHeartEmpty, IoMdHeart } from 'react-icons/io';
 import { Feeds } from '@devpunk/types';
-import { getFeeds } from '../../gql';
 import {
   FeedsContainer,
   FeedColumns,
@@ -10,16 +10,16 @@ import {
   FeedsTitle,
   FeedsMeta,
   FeedMetaTitle,
-  FeedMetaAction,
+  FeedMetaAction
 } from './style';
-import { getRelativeTime } from '../../utils';
-import { FeedMetaIcon } from '../Admin/FeedsList/style';
-import { IoMdHeartEmpty, IoMdHeart } from 'react-icons/io';
+import { getRelativeTime, CONFIG, gql, colors } from '../../utils';
+import { useUserContext } from '../../context';
 
 const BATCH_SIZE = 1;
 
 interface FeedsGridProps {
   website: string;
+  selected: number;
   columns?: number;
 }
 
@@ -31,22 +31,39 @@ const getEmptyData = (columns: number) => {
     .map(() => []);
 };
 
-const FeedsGrid = ({ website, columns }) => {
+const FeedsGrid: FeedsGrid = ({ website, columns, selected }) => {
   const [feeds, setFeeds] = useState<Feeds[]>([]);
+  const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const lock = useRef(false);
   const containerRef = useRef<HTMLDivElement>();
+  const user = useUserContext();
+  const [favorites, setFavorites] = useState<Record<string, boolean>>({});
 
   const [data, setData] = useState<Feeds[][]>(getEmptyData(columns));
 
   const loadFeeds = async () => {
-    if (lock.current) {
+    if (lock.current || !hasMore) {
       return;
     }
     lock.current = true;
 
-    const entries = await getFeeds(page, website);
+    let entries;
+
+    if (selected === CONFIG.WEBSITE_IDS.PINNED_WEBSITE) {
+      entries = user.user.favorites;
+      setHasMore(false);
+    } else if (selected === CONFIG.WEBSITE_IDS.ALL_WEBSITE) {
+      entries = await gql.getFeeds(page);
+    } else {
+      entries = await gql.getFeeds(page, website);
+    }
+
     setPage(page + 1);
+
+    if (entries.length === 0) {
+      setHasMore(false);
+    }
 
     if (page === 1) {
       setFeeds(entries);
@@ -64,16 +81,16 @@ const FeedsGrid = ({ website, columns }) => {
     lock.current = true;
 
     const items = feeds.slice(0, BATCH_SIZE);
-    const children = containerRef.current.children;
-    const length = children.length;
+    const { children } = containerRef.current;
+    const { length } = children;
 
     const _data = [...data];
 
-    for (const feed of items) {
+    items.forEach((feed) => {
       let minHeightIndex = 0;
       let minHeight = Number.MAX_VALUE;
 
-      for (let i = 0; i < length; i++) {
+      for (let i = 0; i < length; i += 1) {
         const lastChild = children.item(i).lastChild as HTMLDivElement;
 
         const height =
@@ -86,31 +103,62 @@ const FeedsGrid = ({ website, columns }) => {
       }
 
       _data[minHeightIndex].push(feed);
-    }
+    });
 
     setFeeds(feeds.slice(BATCH_SIZE));
     setData(_data);
     lock.current = false;
   };
 
+  const handleHeartClick = (feed: Feeds) => (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (favorites[feed._id]) {
+      const index = user.user.favorites.findIndex(
+        (pin) => pin._id === feed._id
+      );
+      user.setFavorites(
+        user.user.favorites
+          .slice(0, index)
+          .concat(user.user.favorites.slice(index + 1))
+      );
+    } else {
+      user.setFavorites([...user.user.favorites, feed]);
+    }
+  };
+
   useEffect(() => {
     if (!lock.current && feeds.length) {
       renderFeeds();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feeds]);
 
   useEffect(() => {
-    setData(getEmptyData(columns));
     loadFeeds();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   useEffect(() => {
+    const favs = {};
+    user.user.favorites.forEach((fav) => {
+      favs[fav._id] = true;
+    });
+
+    setFavorites(favs);
+  }, [user]);
+
+  useEffect(() => {
+    setHasMore(true);
     setData(getEmptyData(columns));
     setPage(1);
-  }, [columns, website]);
+  }, [columns, website, selected]);
 
-  const handleFeedClick = (id) => () => {
-    window.open(`http://localhost:3000/r/${id}`);
+  const handleFeedClick = (id: string) => () => {
+    window.open(CONFIG.ENDPOINTS.redirect(id));
   };
 
   return (
@@ -121,12 +169,11 @@ const FeedsGrid = ({ website, columns }) => {
       columns={columns}
     >
       {data.map((cols, index) => (
+        // eslint-disable-next-line react/no-array-index-key
         <FeedColumns key={index}>
           {cols.map((feed) => (
             <FeedBlock key={feed._id} onClick={handleFeedClick(feed._id)}>
-              <FeedImage
-                src={`http://localhost:3000/api/images/feeds/${feed._id}`}
-              ></FeedImage>
+              <FeedImage src={CONFIG.ENDPOINTS.feedBanner(feed._id)} />
               <FeedDetails>
                 <FeedsTitle>{feed.title}</FeedsTitle>
                 <FeedsMeta>
@@ -134,8 +181,12 @@ const FeedsGrid = ({ website, columns }) => {
                     {getRelativeTime(feed.publishedAt || feed.createdAt)}
                     {feed.author ? ` • ${feed.author}` : ''}
                   </FeedMetaTitle>
-                  <FeedMetaAction>
-                    <IoMdHeartEmpty />
+                  <FeedMetaAction onClick={handleHeartClick(feed)}>
+                    {favorites[feed._id] ? (
+                      <IoMdHeart color={colors.heartColor} />
+                    ) : (
+                      <IoMdHeartEmpty />
+                    )}
                   </FeedMetaAction>
                 </FeedsMeta>
               </FeedDetails>

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { MdClose } from 'react-icons/md';
 import {
   Wrapper,
@@ -6,7 +6,7 @@ import {
   Header,
   Title,
   CloseButton,
-  ModalContent,
+  ModalContent
 } from './style';
 
 interface ModalProps {
@@ -32,7 +32,7 @@ const Modal: Modal = ({ isOpen, title, children, onClose }) => {
       </Container>
     </Wrapper>
   ) : (
-    <Fragment />
+    <></>
   );
 };
 

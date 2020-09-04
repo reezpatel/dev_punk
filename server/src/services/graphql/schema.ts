@@ -1,3 +1,4 @@
+const schema = `
 type Website {
   _id: String
   name: String
@@ -31,7 +32,7 @@ type Feed {
 
 type User {
   _id: String
-  name: String!
+  name: String
   favorites: [Feed]
   pins: [Website]
   error: String
@@ -57,3 +58,6 @@ type Mutation {
   updateFavorites(ids: [String!]!): User
   updatePins(ids: [String]!): User
 }
+`;
+
+export { schema };

@@ -1,6 +1,10 @@
-import fp from 'fastify-plugin';
+import { FastifyPluginCallback } from 'fastify';
 
-const metricsHandler = fp((fastify, _, next) => {
+const metricsHandler: FastifyPluginCallback<Record<string, unknown>> = (
+  fastify,
+  _,
+  next
+) => {
   fastify.get('/live', (__, res) => {
     res.send({ message: 'Server can hear you loud and clear', success: true });
   });
@@ -20,6 +24,6 @@ const metricsHandler = fp((fastify, _, next) => {
   });
 
   next();
-});
+};
 
 export default metricsHandler;

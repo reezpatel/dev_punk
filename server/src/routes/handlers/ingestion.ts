@@ -1,6 +1,10 @@
-import fp from 'fastify-plugin';
+import { FastifyPluginCallback } from 'fastify';
 
-const ingestionHandler = fp((fastify, _, next) => {
+const ingestionHandler: FastifyPluginCallback<Record<string, unknown>> = (
+  fastify,
+  _,
+  next
+) => {
   fastify.get('/ingest', async (__, res) => {
     const websites = await fastify.db.getAllWebsites();
 
@@ -28,6 +32,6 @@ const ingestionHandler = fp((fastify, _, next) => {
   });
 
   next();
-});
+};
 
 export default ingestionHandler;

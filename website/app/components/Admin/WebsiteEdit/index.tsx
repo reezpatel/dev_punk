@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Row, TextInput, SelectInput, Loader } from '../../UI';
 import { Website } from '@devpunk/types';
 import { RiAlarmWarningLine } from 'react-icons/ri';
-import { addNewWebsite, editWebsite } from '../../../gql';
+import { Row, TextInput, SelectInput, Loader } from '../../UI';
 import {
   Container,
   Logo,
   ButtonFilled,
   ButtonOutlined,
   FileInput,
-  ErrorLabel,
+  ErrorLabel
 } from './style';
+import { gql, CONFIG } from '../../../utils';
 
 const OPTIONS = [
   { name: 'Yes', value: 'true' },
-  { name: 'No', value: 'false' },
+  { name: 'No', value: 'false' }
 ];
 
 const defaultWebsite = {
@@ -24,7 +24,7 @@ const defaultWebsite = {
   website: '',
   order: 10,
   feed: '',
-  active: true,
+  active: true
 };
 
 interface WebsiteEditProps {
@@ -57,9 +57,7 @@ const WebsiteEdit: WebsiteEdit = ({ onClose, website: _website, editMode }) => {
       return;
     }
 
-    const response = await fetch(
-      `http://localhost:3000/api/images/website/${_website._id}`
-    );
+    const response = await fetch(CONFIG.ENDPOINTS.websiteIcon(_website._id));
 
     setImage(await convertBlobToBase64(await response.blob()));
   };
@@ -73,51 +71,53 @@ const WebsiteEdit: WebsiteEdit = ({ onClose, website: _website, editMode }) => {
         website: _website.website,
         order: _website.order,
         feed: _website.feed,
-        active: _website.active,
+        active: _website.active
       });
     } else {
       setWebsite(defaultWebsite);
     }
     updateImage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_website, editMode]);
 
   const handleInput = (field: string) => (value: string) => {
     setWebsite({
       ...website,
-      [field]: value,
+      [field]: value
     });
   };
 
   const handleNumberInput = (field: string) => (value: string) => {
-    const num = Number(value || 0);
     setWebsite({
       ...website,
-      [field]: isNaN(num) ? 0 : num,
+      [field]: Number(value || 0)
     });
   };
 
   const handleBooleanInput = (field: string) => (value: string) => {
     setWebsite({
       ...website,
-      [field]: value === 'true',
+      [field]: value === 'true'
     });
   };
 
   const handleSaveButtonClicked = () => {
-    const promise = editMode ? editWebsite(website) : addNewWebsite(website);
+    const promise = editMode
+      ? gql.editWebsite(website)
+      : gql.addNewWebsite(website);
+
     setView('LOADING');
     promise
       .then((res) => {
-        console.log(res.editWebsite);
-        const documentId = editMode ? res.editWebsite._id : res.addWebsite._id;
+        const documentId = res._id;
 
         if (image) {
-          fetch('http://localhost:3000/api/images', {
+          fetch(CONFIG.ENDPOINTS.imageUpload, {
             method: 'PUT',
             body: JSON.stringify({
               id: documentId,
-              image,
-            }),
+              image
+            })
           }).then(() => {
             setView('HIDDEN');
             onClose();
@@ -128,7 +128,6 @@ const WebsiteEdit: WebsiteEdit = ({ onClose, website: _website, editMode }) => {
         }
       })
       .catch((e) => {
-        console.log(e);
         setView('ERROR');
         setError(e.message);
       });
@@ -149,7 +148,7 @@ const WebsiteEdit: WebsiteEdit = ({ onClose, website: _website, editMode }) => {
       };
       reader.readAsDataURL(input.files[0]);
     } else {
-      console.error('Pick a valid Image file');
+      setError('Pick a valid Image file');
     }
   };
 
@@ -181,19 +180,19 @@ const WebsiteEdit: WebsiteEdit = ({ onClose, website: _website, editMode }) => {
         <Row size="5fr 1fr 5fr">
           <TextInput
             label="Order"
-            value={website.order + ''}
+            value={`${website.order}`}
             onChange={handleNumberInput('order')}
           />
-          <div></div>
+          <div />
           <SelectInput
             label="Active"
             options={OPTIONS}
-            value={website.active + ''}
+            value={`${website.active}`}
             onChange={handleBooleanInput('active')}
           />
         </Row>
       </Row>
-      <br></br>
+      <br />
       <Row size="4fr 1fr 1fr">
         <div>
           {view === 'LOADING' && <Loader />}

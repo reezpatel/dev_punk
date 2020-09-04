@@ -1,4 +1,8 @@
-import React, { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Website, Feeds } from '@devpunk/types';
+import { MdTimer } from 'react-icons/md';
+import { FiPenTool, FiTrash2 } from 'react-icons/fi';
+import { BsPersonFill } from 'react-icons/bs';
 import {
   Container,
   FeedsContainer,
@@ -11,15 +15,10 @@ import {
   FeedMetaIcon,
   FeedMetaText,
   FeedActionContainer,
-  FeedActionDelete,
+  FeedActionDelete
 } from './style';
-import { Website, Feeds } from '@devpunk/types';
-import { getFeeds, deleteFeed } from '../../../gql';
 import { Row } from '../../UI';
-import { MdTimer } from 'react-icons/md';
-import { FiPenTool, FiTrash2 } from 'react-icons/fi';
-import { BsPersonFill } from 'react-icons/bs';
-import { getRelativeTime } from '../../../utils';
+import { getRelativeTime, gql, CONFIG } from '../../../utils';
 
 interface FeedsListProps {
   website: Website;
@@ -28,11 +27,12 @@ interface FeedsListProps {
 type FeedsList = (props: FeedsListProps) => JSX.Element;
 
 const FeedsList: FeedsList = ({ website }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [page, setPage] = useState(1);
   const [feeds, setFeeds] = useState<Feeds[]>([]);
 
   const loadFeeds = async () => {
-    const data = await getFeeds(page, website._id);
+    const data = await gql.getFeeds(page, website._id);
     if (page === 1) {
       setFeeds(data);
     } else {
@@ -42,18 +42,22 @@ const FeedsList: FeedsList = ({ website }) => {
 
   useEffect(() => {
     loadFeeds();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [website, page]);
 
   const handleFeedsDelete = (feed: Feeds) => () => {
-    deleteFeed(feed._id)
+    gql
+      .deleteFeed(feed._id)
       .then((res) => {
-        if (res.deleteFeed.success) {
+        if (res.success) {
           setFeeds(feeds.filter(({ _id }) => _id !== feed._id));
         } else {
-          console.log('Delete Failed', res);
+          // eslint-disable-next-line no-console
+          console.error('Delete Failed', res);
         }
       })
       .catch((e) => {
+        // eslint-disable-next-line no-console
         console.error(e);
       });
   };
@@ -64,9 +68,7 @@ const FeedsList: FeedsList = ({ website }) => {
         feeds.map((feed) => (
           <FeedsContainer key={feed._id}>
             <Row size="2fr 8fr 1fr" gap="20px">
-              <FeedsImage
-                src={`http://localhost:3000/api/images/feeds/${feed._id}`}
-              />
+              <FeedsImage src={CONFIG.ENDPOINTS.feedBanner(feed._id)} />
               <FeedDetails>
                 <FeedTitle>{feed.title}</FeedTitle>
 
@@ -78,36 +80,36 @@ const FeedsList: FeedsList = ({ website }) => {
                 <Row size="1fr 1fr 1fr">
                   <FeedsMeta>
                     {feed.createdAt && (
-                      <Fragment>
+                      <>
                         <FeedMetaIcon>
                           <MdTimer fontSize="22" />
                         </FeedMetaIcon>
                         <FeedMetaText>
                           {getRelativeTime(feed.createdAt)}
                         </FeedMetaText>
-                      </Fragment>
+                      </>
                     )}
                   </FeedsMeta>
                   <FeedsMeta>
                     {feed.publishedAt && (
-                      <Fragment>
+                      <>
                         <FeedMetaIcon>
                           <FiPenTool fontSize="22" />
                         </FeedMetaIcon>
                         <FeedMetaText>
                           {getRelativeTime(feed.publishedAt)}
                         </FeedMetaText>
-                      </Fragment>
+                      </>
                     )}
                   </FeedsMeta>
                   <FeedsMeta>
                     {feed.author && (
-                      <Fragment>
+                      <>
                         <FeedMetaIcon>
                           <BsPersonFill fontSize="22" />
                         </FeedMetaIcon>
                         <FeedMetaText>{feed.author}</FeedMetaText>
-                      </Fragment>
+                      </>
                     )}
                   </FeedsMeta>
                 </Row>

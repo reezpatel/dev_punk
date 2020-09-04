@@ -1,59 +1,60 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import AdminPage from './Pages/Admin';
-import GuestPage from './Pages/Guest';
-import AuthPage from './Pages/Auth';
-import { useUserContext } from './context/UserContext';
-import { getUser } from './gql';
+import { useUserContext } from './context';
+import { request, gql } from './utils';
+import { FullScreenLoader } from './components';
+import { FeedsPage, AuthPage, AdminPage } from './Pages';
 
-const App = () => {
-  const [loading, setLoading] = useState(true);
+const VIEW_LOADING = 0;
+const VIEW_CONTENT = 1;
+
+const App = (): JSX.Element => {
+  const [view, setView] = useState(VIEW_LOADING);
   const user = useUserContext();
 
   const validateLogin = async () => {
-    const token = window.localStorage.getItem('AUTH_TOKEN');
+    try {
+      const token = window.localStorage.getItem('AUTH_TOKEN');
 
-    if (!token) {
+      if (await request.validateAuthToken(token)) {
+        user.login(token);
+
+        // TODO Add user data to state
+        // const userData = await gql.getUser(token);
+        // console.log(userData);
+      } else {
+        user.logout();
+      }
+    } catch {
       user.logout();
     }
-
-    const response = await fetch('http://localhost:3000/auth/validate', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const data = await response.json();
-
-    if (data && data.success) {
-      user.login(token);
-      const userData = await getUser(token);
-      console.log(userData);
-    } else {
-      user.logout();
-    }
-
-    setLoading(false);
+    setView(VIEW_CONTENT);
   };
 
   useEffect(() => {
     validateLogin();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return loading ? (
-    <div>loading</div>
-  ) : (
-    <BrowserRouter>
-      <Switch>
-        <Route path="/" exact>
-          <GuestPage></GuestPage>
-        </Route>
-        <Route path="/admin">
-          <AdminPage></AdminPage>
-        </Route>
-        <Route path="/authcallback">
-          <AuthPage></AuthPage>
-        </Route>
-      </Switch>
-    </BrowserRouter>
+  return (
+    <>
+      {view === VIEW_CONTENT && (
+        <BrowserRouter>
+          <Switch>
+            <Route path="/" exact>
+              <FeedsPage />
+            </Route>
+            <Route path="/admin">
+              <AdminPage />
+            </Route>
+            <Route path="/auth">
+              <AuthPage />
+            </Route>
+          </Switch>
+        </BrowserRouter>
+      )}
+      {view === VIEW_LOADING && <FullScreenLoader />}
+    </>
   );
 };
 

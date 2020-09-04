@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
+import { RiMenuLine } from 'react-icons/ri';
+import { AiOutlineLogin, AiOutlineLogout } from 'react-icons/ai';
 import {
   AppHeader,
   AppIcon,
   AppHeading,
   HeaderOption,
-  HeaderOptions,
-  LoginContainer,
-  LoginText,
-  LoginLink,
-  LoginButton,
-  LoginTitle,
-  LoginWrapper,
+  HeaderOptions
 } from './style';
 import Icon from '../../assets/logo.png';
 import Modal from '../Modal';
-import { Row } from '../UI';
-import { FaGithub } from 'react-icons/fa';
-import { useUserContext } from '../../context/UserContext';
+import { useUserContext } from '../../context';
+import Login from '../Login';
 
-const Header = () => {
+interface HeaderProps {
+  showMenuIcon: boolean;
+  onMenuClick: () => void;
+}
+
+type Header = (props: HeaderProps) => JSX.Element;
+
+const Header: Header = ({ showMenuIcon, onMenuClick }) => {
   const [isOpen, setOpen] = useState(false);
   const user = useUserContext();
 
@@ -37,34 +39,37 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    console.log('Will logout');
+    user.logout();
+  };
+
+  const handleMenuClick = () => {
+    onMenuClick();
   };
 
   return (
     <AppHeader>
-      <AppIcon src={Icon}></AppIcon>
+      <RiMenuLine
+        onClick={handleMenuClick}
+        color="white"
+        size="24"
+        cursor="pointer"
+        visibility={showMenuIcon ? '' : 'hidden'}
+      />
+      <AppIcon src={Icon} />
       <AppHeading>Devpunk</AppHeading>
       <HeaderOptions>
         {user.user.isLoggedIn ? (
-          <HeaderOption onClick={handleLogout}>Logout</HeaderOption>
+          <HeaderOption onClick={handleLogout}>
+            <AiOutlineLogout color="white" size="24" cursor="pointer" />
+          </HeaderOption>
         ) : (
-          <HeaderOption onClick={handleModalOpen}>Login</HeaderOption>
+          <HeaderOption onClick={handleModalOpen}>
+            <AiOutlineLogin color="white" size="24" cursor="pointer" />
+          </HeaderOption>
         )}
       </HeaderOptions>
-      <Modal onClose={handleModalClose} isOpen={isOpen} title={'Login'}>
-        <LoginContainer>
-          <LoginTitle>Hello There, </LoginTitle>
-          <LoginText>Login into Devpunk using you social account.</LoginText>
-          <LoginWrapper>
-            <LoginButton onClick={handleLoginButtonClick}>
-              <FaGithub size="24" /> &nbsp; &nbsp; Login with Github
-            </LoginButton>
-          </LoginWrapper>
-          <Row size="1fr 1fr">
-            <LoginLink href="#">Privacy Policy</LoginLink>
-            <LoginLink href="#">Terms &amp; Conditions</LoginLink>
-          </Row>
-        </LoginContainer>
+      <Modal onClose={handleModalClose} isOpen={isOpen} title="Login">
+        <Login onLogin={handleLoginButtonClick} />
       </Modal>
     </AppHeader>
   );

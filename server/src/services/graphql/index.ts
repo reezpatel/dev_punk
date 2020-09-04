@@ -3,7 +3,7 @@ import gql from 'fastify-gql';
 import { IFeeds, IUser } from 'src/types/database';
 import DBController from '../database/controller';
 import { RedisService } from '../redis';
-import schema from './schema.gql';
+import { schema } from './schema';
 
 const ZERO_INDEX = 0;
 const FIRST_INDEX = 1;

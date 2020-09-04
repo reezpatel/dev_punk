@@ -1,14 +1,15 @@
-import React, { Fragment, useEffect, useState } from 'react';
-import styled from 'styled-components';
-import Header from '../../components/Header';
-import AdminWebsites from '../../components/Admin/Websites';
-import WebsiteDetails from '../../components/Admin/WebsiteDetails';
-import { getAllWebsites, deleteWebsite } from '../../gql';
-import { Website } from '@devpunk/types';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useUserContext } from '../../context/UserContext';
-import Modal from '../../components/Modal';
-import WebsiteEdit from '../../components/Admin/WebsiteEdit';
+import styled from 'styled-components';
+import { Website } from '@devpunk/types';
+import { Header, Modal } from '../../components';
+import {
+  AdminWebsites,
+  WebsiteDetails,
+  WebsiteEdit
+} from '../../components/Admin';
+import { gql, noop } from '../../utils';
+import { useUserContext } from '../../context';
 
 const Container = styled.div`
   display: grid;
@@ -16,7 +17,7 @@ const Container = styled.div`
   height: calc(100vh - 68px);
 `;
 
-const AdminPage = () => {
+const AdminPage = (): JSX.Element => {
   const [websites, setWebsites] = useState<Website[]>([]);
   const [isNewModalOpen, setNewModalOpen] = useState(false);
   const [selected, setSelected] = useState(-1);
@@ -26,7 +27,7 @@ const AdminPage = () => {
   const history = useHistory();
 
   const loadWebsites = async () => {
-    const sites = await getAllWebsites();
+    const sites = await gql.getAllWebsites();
     setWebsites(sites);
   };
 
@@ -39,7 +40,7 @@ const AdminPage = () => {
       history.replace('/');
     }
     loadWebsites();
-  }, []);
+  }, [history, user]);
 
   const handleSelection = (index) => {
     setSelected(index);
@@ -61,22 +62,25 @@ const AdminPage = () => {
   };
 
   const handleWebsiteDelete = (website: Website) => {
-    deleteWebsite(website._id)
+    gql
+      .deleteWebsite(website._id)
       .then((res) => {
-        if (res.deleteWebsite.success) {
+        if (res.success) {
           loadWebsites();
         } else {
-          console.log('Delete Failed', res);
+          // eslint-disable-next-line no-console
+          console.error('Delete Failed', res);
         }
       })
       .catch((e) => {
+        // eslint-disable-next-line no-console
         console.error(e);
       });
   };
 
   return (
-    <Fragment>
-      <Header />
+    <>
+      <Header showMenuIcon={false} onMenuClick={noop} />
       <Modal
         onClose={handleModalClose}
         title="Add New Website"
@@ -103,7 +107,7 @@ const AdminPage = () => {
           />
         )}
       </Container>
-    </Fragment>
+    </>
   );
 };
 

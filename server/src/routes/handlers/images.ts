@@ -1,16 +1,23 @@
 import { createReadStream } from 'fs';
 import { join } from 'path';
-import fp from 'fastify-plugin';
+import { FastifyPluginCallback } from 'fastify';
 
-const DEFAULT_WEBSITE_LOGO_PATH = join(__dirname, './../../assets/logo.png');
-const DEFAULT_FEED_BANNER_PATH = join(__dirname, './../../assets/banner.png');
+const DEFAULT_WEBSITE_LOGO_PATH = join(__dirname, './../../../assets/logo.png');
+const DEFAULT_FEED_BANNER_PATH = join(
+  __dirname,
+  './../../../assets/banner.png'
+);
 
 interface WebsitePutBody {
   id: string;
   image: string;
 }
 
-const imageHandlers = fp((fastify, _, next) => {
+const imageHandlers: FastifyPluginCallback<Record<string, unknown>> = (
+  fastify,
+  _,
+  next
+) => {
   fastify.put<{ Body: WebsitePutBody }>('/website', (req, res) => {
     const { id, image } = req.body;
 
@@ -35,6 +42,6 @@ const imageHandlers = fp((fastify, _, next) => {
   });
 
   next();
-});
+};
 
 export default imageHandlers;

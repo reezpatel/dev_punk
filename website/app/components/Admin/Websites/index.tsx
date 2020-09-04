@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaPlus } from 'react-icons/fa';
+import { Website } from '@devpunk/types';
 import Image from '../../../assets/empty.png';
-import Modal from '../../../components/Modal';
-import WebsiteEdit from '../WebsiteEdit';
 import {
   WebsiteSubTitle,
   WebsiteTitle,
@@ -17,9 +16,9 @@ import {
   ContentSection,
   NewButton,
   Heading,
-  Container,
+  Container
 } from './style';
-import { Website } from '@devpunk/types';
+import { CONFIG } from '../../../utils';
 
 interface AdminWebsitesProps {
   websites: Website[];
@@ -34,7 +33,7 @@ const AdminWebsites: AdminWebsites = ({
   websites,
   onSiteSelection,
   selected,
-  onNew,
+  onNew
 }) => {
   const handleWebsiteClick = (index) => () => {
     onSiteSelection(index);
@@ -57,9 +56,7 @@ const AdminWebsites: AdminWebsites = ({
               onClick={handleWebsiteClick(index)}
             >
               <WebsiteImageContainer>
-                <WebsiteImage
-                  src={`http://localhost:3000/api/images/website/${site._id}`}
-                />
+                <WebsiteImage src={CONFIG.ENDPOINTS.websiteIcon(site._id)} />
               </WebsiteImageContainer>
 
               <WebsiteDetailsContainer>
@@ -72,7 +69,7 @@ const AdminWebsites: AdminWebsites = ({
       ) : (
         <EmptyBlock>
           <EmptyBlockImg src={Image} />
-          <EmptyBlockMessage>It's empty here..</EmptyBlockMessage>
+          <EmptyBlockMessage>It&apos;s empty here..</EmptyBlockMessage>
         </EmptyBlock>
       )}
     </Container>
