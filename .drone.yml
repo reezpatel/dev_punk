@@ -5,28 +5,27 @@ name: default
 workspace:
   path: /drone/src
 
-environment:
-  DOCKER_USERNAME:
-    from_secret: docker_username
-  DOCKER_PASSWORD:
-    from_secret: docker_password
-
 steps:
-  - name: build-cache
-    image: node:lts-alpine
-    commands:
-      - "yarn install -W"
-  - name: lint
-    image: node:lts-alpine
-    commands:
-      - "yarn lint:website"
-      - "yarn lint:server"
-  - name: build-website
-    image: node:lts-alpine
-    commands:
-      - "yarn workspace @devpunk/website build"
+  # - name: build-cache
+  #   image: node:lts-alpine
+  #   commands:
+  #     - "yarn install -W"
+  # - name: lint
+  #   image: node:lts-alpine
+  #   commands:
+  #     - "yarn lint:website"
+  #     - "yarn lint:server"
+  # - name: build-website
+  #   image: node:lts-alpine
+  #   commands:
+  #     - "yarn workspace @devpunk/website build"
   - name: build-image
     image: docker
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
     commands:
       - echo ${DOCKER_USERNAME}
       - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
