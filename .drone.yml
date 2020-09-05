@@ -1,0 +1,32 @@
+kind: pipeline
+type: kubernetes
+name: default
+
+workspace:
+  - path: /drone/src
+
+steps:
+  - name: build-cache
+    image: node:lts-alpine
+    commands:
+      - "yarn install -W"
+  - name: lint
+    image: node:lts-alpine
+    commands:
+      - "yarn workspace @devpunk/website lint"
+      - "yarn workspace @devpunk/website server"
+  - name: build-website
+    image: node:lts-alpine
+    commands:
+      - "yarn workspace @devpunk/website build"
+  - name: build-image
+    image: docker
+    environment:
+      DOCKER_USERNAME:
+        from_secret: docker_username
+      DOCKER_PASSWORD:
+        from_secret: docker_password
+    commands:
+      - "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+      - "docker build . --tag devpunk:latest --tag devpunk:${DRONE_COMMIT}"
+      - "docker push devpunk:${DRONE_COMMIT}"
