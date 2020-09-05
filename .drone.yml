@@ -30,3 +30,10 @@ steps:
       - "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
       - "docker build . --tag devpunk:latest --tag devpunk:${DRONE_COMMIT}"
       - "docker push devpunk:${DRONE_COMMIT}"
+
+trigger:
+  branch:
+    - master
+    - ci-integration
+  event:
+    - push
