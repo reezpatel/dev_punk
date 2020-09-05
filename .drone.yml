@@ -54,12 +54,15 @@ steps:
       - export KUBECONFIG="$PWD/kubeconfig.yml"
       - base64 -d kubeconfig.b64 > kubeconfig.yml
       - helm repo add mychart https://reezpatel.github.io/helm_charts/
-      - helm upgrade --wait devpunk mychart/devpunk -n devpunk -f helm.values.yml --set-string image.tag="${DRONE_COMMIT_SHA:0:8}" --set-string env.MONGODB_PASSWORD="$MONGODB_PASSWORD" --set-string env.MONGODB_USERNAME="$MONGODB_USERNAME" --set-string env.MONGODB_HOST="$MONGODB_HOST" --set-string env.GITHUB_LOGIN_CLIENT_ID="$GITHUB_LOGIN_CLIENT_SECRET" --set-string env.GITHUB_LOGIN_CLIENT_SECRET= "$GITHUB_LOGIN_CLIENT_SECRET"
-    # when:
-    #   event:
-    #     - promote
-    #   target:
-    #     - production
+      - helm upgrade --wait devpunk mychart/devpunk -n devpunk -f helm.values.yml --set-string image.tag="${DRONE_COMMIT_SHA:0:8}" --set-string env.MONGODB_PASSWORD=$MONGODB_PASSWORD --set-string env.MONGODB_USERNAME=$MONGODB_USERNAME --set-string env.MONGODB_HOST=$MONGODB_HOST --set-string env.GITHUB_LOGIN_CLIENT_ID=$GITHUB_LOGIN_CLIENT_SECRET --set-string env.GITHUB_LOGIN_CLIENT_SECRET=$GITHUB_LOGIN_CLIENT_SECRET
+    when:
+      event: deployment
+      environment: production
+  # when:
+  #   event:
+  #     - promote
+  #   target:
+  #     - production
 
 trigger:
   branch:
