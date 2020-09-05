@@ -7,7 +7,8 @@
     "watch:ts": "tsc --w",
     "watch:build": "LOG_LEVEL=debug nodemon --watch build build/index.js | pino-pretty -c ",
     "watch": "concurrently 'npm:watch:*' --kill-others",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "start": "node build/index.js"
   },
   "dependencies": {
     "@types/ioredis": "^4.17.3",

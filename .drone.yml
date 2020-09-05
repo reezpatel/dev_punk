@@ -6,38 +6,38 @@ workspace:
   path: /drone/src
 
 steps:
-  # - name: build-cache
-  #   image: node:lts-alpine
-  #   commands:
-  #     - "yarn install -W"
-  # - name: lint
-  #   image: node:lts-alpine
-  #   commands:
-  #     - "yarn lint:website"
-  #     - "yarn lint:server"
-  # - name: build-website
-  #   image: node:lts-alpine
-  #   commands:
-  #     - "yarn workspace @devpunk/website build"
-  # - name: build-server
-  #   image: node:lts-alpine
-  #   commands:
-  #     - "yarn workspace @devpunk/server build"
-  # - name: build-image
-  #   image: plugins/docker
-  #   settings:
-  #     username:
-  #       from_secret: docker_username
-  #     password:
-  #       from_secret: docker_password
-  #     repo: reezpatel/devpunk
-  #     tags:
-  #       - latest
-  #       - ${DRONE_COMMIT:0:8}
+  - name: build-cache
+    image: node:lts-alpine
+    commands:
+      - "yarn install -W"
+  - name: lint
+    image: node:lts-alpine
+    commands:
+      - "yarn lint:website"
+      - "yarn lint:server"
+  - name: build-website
+    image: node:lts-alpine
+    commands:
+      - "yarn workspace @devpunk/website build"
+  - name: build-server
+    image: node:lts-alpine
+    commands:
+      - "yarn workspace @devpunk/server build"
+  - name: build-image
+    image: plugins/docker
+    settings:
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+      repo: reezpatel/devpunk
+      tags:
+        - latest
+        - ${DRONE_COMMIT:0:8}
   - name: deploy
     image: alpine/helm:3.2.1
     environment:
-      KUBECONFIG:
+      KUBECONFIG_FILE:
         from_secret: KUBECONFIG
       MONGODB_PASSWORD:
         from_secret: MONGODB_PASSWORD
@@ -50,12 +50,13 @@ steps:
       GITHUB_LOGIN_CLIENT_SECRET:
         from_secret: GITHUB_LOGIN_CLIENT_SECRET
     commands:
-      - echo "$KUBECONFIG" > kubeconfig.b64
+      - echo "$KUBECONFIG_FILE" > kubeconfig.b64
       - export KUBECONFIG="$PWD/kubeconfig.yml"
       - base64 -d kubeconfig.b64 > kubeconfig.yml
       - helm repo add mychart https://reezpatel.github.io/helm_charts
+      - echo "$KUBECONFIG_FILE"
       - helm repo update
-      - helm upgrade --wait --install --atomic devpunk mychart/devpunk -n devpunk -f helm.values.yml --set-string image.tag="${DRONE_COMMIT_SHA:0:8}" --set-string env.MONGODB_PASSWORD="$MONGODB_PASSWORD" --set-string env.MONGODB_USERNAME="$MONGODB_USERNAME" --set-string env.MONGODB_HOST=$MONGODB_HOST --set-string env.GITHUB_LOGIN_CLIENT_ID=$GITHUB_LOGIN_CLIENT_SECRET --set-string env.GITHUB_LOGIN_CLIENT_SECRET=$GITHUB_LOGIN_CLIENT_SECRET
+      - helm upgrade --wait --install --atomic devpunk mychart/devpunk -n devpunk -f helm.values.yml --set-string image.tag="${DRONE_COMMIT_SHA:0:8}" --set-string env.MONGODB_PASSWORD="$MONGODB_PASSWORD" --set-string env.MONGODB_USERNAME="$MONGODB_USERNAME" --set-string env.MONGODB_HOST="$MONGODB_HOST" --set-string env.GITHUB_LOGIN_CLIENT_ID="$GITHUB_LOGIN_CLIENT_SECRET" --set-string env.GITHUB_LOGIN_CLIENT_SECRET="$GITHUB_LOGIN_CLIENT_SECRET"
     # when:
     #   event:
     #     - promote
