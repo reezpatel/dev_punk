@@ -9,4 +9,4 @@ COPY server/build /app/build
 
 RUN yarn install
 
-CMD ["yarn", "start"]
+CMD ["yarn", "run", "start"]
