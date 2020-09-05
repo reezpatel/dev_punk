@@ -21,14 +21,11 @@ steps:
   #     - "yarn workspace @devpunk/website build"
   - name: build-image
     image: plugins/docker
-    environment:
-      DOCKER_USERNAME:
-        from_secret: docker_username
-      DOCKER_PASSWORD:
-        from_secret: docker_password
     settings:
-      username: $DOCKER_USERNAME
-      password: $DOCKER_PASSWORD
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
       repo: reezpatel/devpunk
       tags:
         - latest
