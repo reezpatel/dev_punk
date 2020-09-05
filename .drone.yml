@@ -54,7 +54,7 @@ steps:
       - export KUBECONFIG="$PWD/kubeconfig.yml"
       - base64 -d kubeconfig.b64 > kubeconfig.yml
       - helm repo add mychart https://reezpatel.github.io/helm_charts/
-      - >-
+      - |
         helm upgrade --wait devpunk mychart/devpunk -n devpunk -f helm.values.yml \
         --set-string image.tag="${DRONE_COMMIT_SHA:0:8}" \
         --set-string env.MONGODB_PASSWORD="$MONGODB_PASSWORD" \
