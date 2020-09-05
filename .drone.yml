@@ -15,10 +15,10 @@ steps:
   #   commands:
   #     - "yarn lint:website"
   #     - "yarn lint:server"
-  # - name: build-website
-  #   image: node:lts-alpine
-  #   commands:
-  #     - "yarn workspace @devpunk/website build"
+  - name: build-website
+    image: node:lts-alpine
+    commands:
+      - "yarn workspace @devpunk/website build"
   - name: build-image
     image: plugins/docker
     settings:
