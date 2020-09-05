@@ -1,0 +1,103 @@
+replicaCount: 1
+image:
+  repository: reezpatel/devpunk
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+# service:
+#   type: ClusterIP
+#   port: 80
+
+persistentVolume:
+  enabled: true
+
+  ## Server data Persistent Volume access modes
+  ## Must match those of existing PV or dynamic provisioner
+  accessModes:
+    - ReadWriteOnce
+
+  ##  Server data Persistent Volume annotations
+  annotations:
+    "helm.sh/resource-policy": keep
+
+  ## If you'd like to bring your own PVC for persisting state, pass the name of the
+  ## created + ready PVC here. If set, this Chart will not create the default PVC.
+  ## Requires server.persistentVolume.enabled: true
+  existingClaim: ""
+
+  ## Server data Persistent Volume mount root path
+  mountPath: /data
+
+  ## Server data Persistent Volume size
+  size: 8Gi
+
+  ## Server data Persistent Volume Storage Class
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  storageClass: "local-path"
+
+  ## Server data Persistent Volume Binding Mode
+  ## If defined, volumeMode: <volumeMode>
+  ## If empty (the default) or set to null, no volumeBindingMode spec is
+  ## set, choosing the default mode.
+  volumeMode: ""
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: devpunk.xyz
+      paths:
+        - "/"
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 1Gi
+  requests:
+    cpu: 200m
+    memory: 1Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  MONGODB_DB_NAME: "devpunk"
+  MONGODB_AUTH_DB: "admin"
+  MONGODB_PORT: 27017
+  DATA_DIR: /data
+  APPLICATION_URL: "https://www.devpunk.xyz"
