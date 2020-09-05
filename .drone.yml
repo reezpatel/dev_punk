@@ -5,6 +5,12 @@ name: default
 workspace:
   path: /drone/src
 
+environment:
+  DOCKER_USERNAME:
+    from_secret: docker_username
+  DOCKER_PASSWORD:
+    from_secret: docker_password
+
 steps:
   - name: build-cache
     image: node:lts-alpine
@@ -21,15 +27,11 @@ steps:
       - "yarn workspace @devpunk/website build"
   - name: build-image
     image: docker
-    environment:
-      DOCKER_USERNAME:
-        from_secret: docker_username
-      DOCKER_PASSWORD:
-        from_secret: docker_password
     commands:
-      - "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-      - "docker build . --tag devpunk:latest --tag devpunk:${DRONE_COMMIT}"
-      - "docker push devpunk:${DRONE_COMMIT}"
+      - echo ${DOCKER_USERNAME}
+      - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+      - docker build . --tag devpunk:latest --tag devpunk:${DRONE_COMMIT}
+      - docker push devpunk:${DRONE_COMMIT}
 
 trigger:
   branch:
