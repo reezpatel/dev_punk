@@ -1,6 +1,7 @@
 import * as gql from './gql';
 import colors from './colors';
 import * as request from './request';
+import ENDPOINTS from './endpoints';
 
 const getRelativeTime = (time: string): string => {
   const msPerMinute = 60 * 1000;
@@ -48,16 +49,7 @@ const CONFIG = {
     tablet: 768,
     desktop: 1200
   },
-  ENDPOINTS: {
-    websiteIcon: (id: string): string =>
-      `http://localhost:3000/api/v1/images/website/${id}`,
-    feedBanner: (id: string): string =>
-      `http://localhost:3000/api/v1/images/feeds/${id}`,
-    redirect: (id: string): string => `http://localhost:3000/api/v1/r/${id}`,
-    authCode: (code: string): string =>
-      `http://localhost:3000/api/v1/auth/${code}`,
-    imageUpload: 'http://localhost:3000/api/images'
-  },
+  ENDPOINTS,
   WEBSITE_IDS: {
     ALL_WEBSITE: -1,
     PINNED_WEBSITE: -2

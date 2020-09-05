@@ -1,7 +1,6 @@
-const API_BASE_URL = 'http://localhost:3000/api/v1';
+import ENDPOINTS from './endpoints';
 
-const AUTH_VALIDATE_URL = `${API_BASE_URL}/auth/validate`;
-
+const AUTH_VALIDATE_URL = ENDPOINTS.authUrl;
 const validateAuthToken = async (token: string): Promise<boolean> => {
   if (!token) {
     return false;
@@ -19,4 +18,5 @@ const validateAuthToken = async (token: string): Promise<boolean> => {
   return false;
 };
 
+// eslint-disable-next-line import/prefer-default-export
 export { validateAuthToken };

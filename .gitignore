@@ -112,3 +112,5 @@ dist
 **/dist
 
 .kubemqctl.yaml
+
+server/public/*

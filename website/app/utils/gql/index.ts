@@ -9,8 +9,9 @@ import {
   DELETE_FEED_MUTATION,
   GET_USER_QUERY
 } from './query';
+import ENDPOINTS from '../endpoints';
 
-const GQL_SERVER = `http://localhost:3000/graphql`;
+const GQL_SERVER = ENDPOINTS.gqlServer;
 
 const client = new ApolloClient({
   uri: GQL_SERVER
