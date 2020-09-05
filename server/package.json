@@ -7,7 +7,6 @@
     "watch:ts": "tsc --w",
     "watch:build": "LOG_LEVEL=debug nodemon --watch build build/index.js | pino-pretty -c ",
     "watch": "concurrently 'npm:watch:*' --kill-others",
-    "lint": "eslint .",
     "build": "tsc --build"
   },
   "dependencies": {

@@ -13,8 +13,8 @@ steps:
   - name: lint
     image: node:lts-alpine
     commands:
-      - "yarn workspace @devpunk/website lint"
-      - "yarn workspace @devpunk/website server"
+      - "yarn lint:website"
+      - "yarn lint:server"
   - name: build-website
     image: node:lts-alpine
     commands:

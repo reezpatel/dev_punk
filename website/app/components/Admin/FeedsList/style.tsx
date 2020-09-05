@@ -90,5 +90,5 @@ export {
   FeedMetaIcon,
   FeedMetaText,
   FeedActionContainer,
-  FeedActionDelete,
+  FeedActionDelete
 };

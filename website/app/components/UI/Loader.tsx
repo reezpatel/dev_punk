@@ -1,4 +1,4 @@
-import React from 'React';
+import React from 'react';
 import styled from 'styled-components';
 
 const LoaderContainer = styled.div`
@@ -11,7 +11,7 @@ const LoaderContainer = styled.div`
   vertical-align: top;
 `;
 
-const Loader = () => {
+const Loader = (): JSX.Element => {
   return (
     <LoaderContainer>
       <svg
@@ -106,4 +106,5 @@ const Loader = () => {
   );
 };
 
+// eslint-disable-next-line import/prefer-default-export
 export { Loader };

@@ -14,4 +14,4 @@ const Row = styled.div<RowProps>`
   align-items: flex-start;
 `;
 
-export { Row };
+export { Row, RowProps };

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { SearchContainer, Bar, SearchInput } from './styles';
 import { FaSearch } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
+import { SearchContainer, Bar, SearchInput } from './styles';
 
-const SearchBar = () => {
+const SearchBar = (): JSX.Element => {
   const [input, setInput] = useState('');
 
   const handleInput = (e) => {

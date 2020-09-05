@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { useUserContext } from './context';
-import { request, gql } from './utils';
+import { request } from './utils';
 import { FullScreenLoader } from './components';
 import { FeedsPage, AuthPage, AdminPage } from './Pages';
 

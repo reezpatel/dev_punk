@@ -63,5 +63,5 @@ export {
   WebsiteLink,
   WebsiteActions,
   WebsiteActionEdit,
-  WebsiteActionDelete,
+  WebsiteActionDelete
 };
