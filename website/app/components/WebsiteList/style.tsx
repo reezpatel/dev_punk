@@ -53,5 +53,5 @@ export {
   WebsiteItem,
   WebsiteIcon,
   WebsiteText,
-  WebsiteAction,
+  WebsiteAction
 };

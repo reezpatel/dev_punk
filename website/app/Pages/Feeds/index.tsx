@@ -18,6 +18,7 @@ const FeedContainer = styled.div`
 `;
 
 const FeedsPage = (): JSX.Element => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [showMenu, setShowMenu] = useState(false);
   const [websites, setWebsite] = useState<Website[]>([]);
   const [selected, setSelected] = useState(-1);
@@ -47,6 +48,7 @@ const FeedsPage = (): JSX.Element => {
     setSelected(index);
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const onMenuClicked = () => {};
 
   return (

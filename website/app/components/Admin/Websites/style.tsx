@@ -100,5 +100,5 @@ export {
   ContentSection,
   NewButton,
   Heading,
-  Container,
+  Container
 };

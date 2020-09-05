@@ -40,9 +40,10 @@ const TextInput: TextInput = ({ label, value, onChange }) => {
         type="text"
         value={value}
         onChange={handleChange}
-      ></Input>
+      />
     </InputContainer>
   );
 };
 
+// eslint-disable-next-line import/prefer-default-export
 export { TextInput };

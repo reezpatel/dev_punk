@@ -4,7 +4,7 @@ import {
   Label,
   Option,
   OptionContainer,
-  Select,
+  Select
 } from './style';
 
 interface SelectProps {
@@ -64,4 +64,5 @@ const SelectInput: SelectInput = ({ label, value, options, onChange }) => {
   );
 };
 
+// eslint-disable-next-line import/prefer-default-export
 export { SelectInput };

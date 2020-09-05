@@ -65,5 +65,5 @@ export {
   FeedsTitle,
   FeedsMeta,
   FeedMetaTitle,
-  FeedMetaAction,
+  FeedMetaAction
 };

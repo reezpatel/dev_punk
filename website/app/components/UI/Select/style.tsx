@@ -50,4 +50,4 @@ const OptionContainer = styled.div`
   right: 0;
 `;
 
-export { InputContainer, Select, Label, Option, OptionContainer };
+export { InputContainer, Select, Label, Option, OptionContainer, OptionProps };

@@ -5,7 +5,10 @@
   "main": "index.js",
   "license": "MIT",
   "private": "true",
-  "scripts": {},
+  "scripts": {
+    "lint:website": "eslint website/.",
+    "lint:server": "eslint server/."
+  },
   "workspaces": [
     "website",
     "server",

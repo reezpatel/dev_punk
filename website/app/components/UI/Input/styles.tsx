@@ -21,7 +21,11 @@ const Input = styled.input`
   font-size: 12px;
 `;
 
-const Label = styled.span<{ focus: boolean }>`
+interface LabelProps {
+  focus: boolean;
+}
+
+const Label = styled.span<LabelProps>`
   position: absolute;
   font-size: ${(prop) => (prop.focus ? '12px' : '10px')};
   left: ${(prop) => (prop.focus ? '14px' : '0px')};
@@ -29,4 +33,4 @@ const Label = styled.span<{ focus: boolean }>`
   transition: all 0.13s linear;
 `;
 
-export { InputContainer, Input, Label };
+export { InputContainer, Input, Label, LabelProps };
