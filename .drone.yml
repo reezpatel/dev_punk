@@ -27,7 +27,7 @@ steps:
       DOCKER_PASSWORD:
         from_secret: docker_password
     commands:
-      - echo ${DOCKER_USERNAME}
+      - echo $DOCKER_USERNAME
       - docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
       - docker build . --tag devpunk:latest --tag devpunk:${DRONE_COMMIT}
       - docker push devpunk:${DRONE_COMMIT}
