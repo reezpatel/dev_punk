@@ -3,11 +3,11 @@ image:
   repository: reezpatel/devpunk
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "latest"
+  tag: 'latest'
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: ''
+fullnameOverride: ''
 
 podAnnotations: {}
 podSecurityContext:
@@ -36,12 +36,12 @@ persistentVolume:
 
   ##  Server data Persistent Volume annotations
   annotations:
-    "helm.sh/resource-policy": keep
+    'helm.sh/resource-policy': keep
 
   ## If you'd like to bring your own PVC for persisting state, pass the name of the
   ## created + ready PVC here. If set, this Chart will not create the default PVC.
   ## Requires server.persistentVolume.enabled: true
-  existingClaim: ""
+  existingClaim: ''
 
   ## Server data Persistent Volume mount root path
   mountPath: /data
@@ -55,13 +55,13 @@ persistentVolume:
   ## If undefined (the default) or set to null, no storageClassName spec is
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
-  storageClass: "local-path"
+  storageClass: 'local-path'
 
   ## Server data Persistent Volume Binding Mode
   ## If defined, volumeMode: <volumeMode>
   ## If empty (the default) or set to null, no volumeBindingMode spec is
   ## set, choosing the default mode.
-  volumeMode: ""
+  volumeMode: ''
 
 service:
   type: ClusterIP
@@ -75,7 +75,7 @@ ingress:
   hosts:
     - host: devpunk.xyz
       paths:
-        - "/"
+        - '/'
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -96,8 +96,8 @@ tolerations: []
 affinity: {}
 
 env:
-  MONGODB_DB_NAME: "devpunk"
-  MONGODB_AUTH_DB: "admin"
-  MONGODB_PORT: 27017
+  MONGODB_DB_NAME: 'devpunk'
+  MONGODB_AUTH_DB: 'admin'
+  MONGODB_PORT: '27017'
   DATA_DIR: /data
-  APPLICATION_URL: "https://www.devpunk.xyz"
+  APPLICATION_URL: 'https://www.devpunk.xyz'
