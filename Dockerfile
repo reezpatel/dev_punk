@@ -7,6 +7,6 @@ COPY server/assets /app/assets
 COPY server/package.json /app/package.json
 COPY server/build /app/build
 
-RUN yarn .
+RUN yarn install
 
 CMD ["yarn", "start"]
