@@ -10,15 +10,19 @@ steps:
     image: node:lts-alpine
     commands:
       - "yarn install -W"
-  # - name: lint
-  #   image: node:lts-alpine
-  #   commands:
-  #     - "yarn lint:website"
-  #     - "yarn lint:server"
+  - name: lint
+    image: node:lts-alpine
+    commands:
+      - "yarn lint:website"
+      - "yarn lint:server"
   - name: build-website
     image: node:lts-alpine
     commands:
       - "yarn workspace @devpunk/website build"
+  - name: build-server
+    image: node:lts-alpine
+    commands:
+      - "yarn workspace @devpunk/server build"
   - name: build-image
     image: plugins/docker
     settings:
