@@ -6,10 +6,10 @@ workspace:
   path: /drone/src
 
 steps:
-  # - name: build-cache
-  #   image: node:lts-alpine
-  #   commands:
-  #     - "yarn install -W"
+  - name: build-cache
+    image: node:lts-alpine
+    commands:
+      - "yarn install -W"
   # - name: lint
   #   image: node:lts-alpine
   #   commands:
