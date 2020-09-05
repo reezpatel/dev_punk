@@ -62,11 +62,11 @@ steps:
         --set-string env.MONGODB_HOST="$MONGODB_HOST" \
         --set-string env.GITHUB_LOGIN_CLIENT_ID="$GITHUB_LOGIN_CLIENT_SECRET" \
         --set-string env.GITHUB_LOGIN_CLIENT_SECRET= "$GITHUB_LOGIN_CLIENT_SECRET"
-    when:
-      event:
-        - promote
-      target:
-        - production
+    # when:
+    #   event:
+    #     - promote
+    #   target:
+    #     - production
 
 trigger:
   branch:
