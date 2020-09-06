@@ -10,20 +10,28 @@ interface Config {
   GITHUB_LOGIN_CLIENT_ID: string;
   GITHUB_LOGIN_CLIENT_SECRET: string;
   APPLICATION_URL: string;
+  REDIS_HOST: string;
+  KUBEMQ_HOST: string;
 }
 
 const schema = {
   properties: {
     APPLICATION_URL: {
+      default: 'https://example.com/',
       type: 'string'
     },
     DATA_DIR: {
+      default: '/tmp',
       type: 'string'
     },
     GITHUB_LOGIN_CLIENT_ID: {
       type: 'string'
     },
     GITHUB_LOGIN_CLIENT_SECRET: {
+      type: 'string'
+    },
+    KUBEMQ_HOST: {
+      default: 'localhost:50000',
       type: 'string'
     },
     MONGODB_AUTH_DB: {
@@ -47,12 +55,22 @@ const schema = {
     MONGODB_USERNAME: {
       type: 'string'
     },
+    REDIS_HOST: {
+      default: 'localhost',
+      type: 'string'
+    },
     SERVER_PORT: {
-      default: '3000',
+      default: 3000,
       type: 'number'
     }
   },
-  required: ['MONGODB_PASSWORD', 'MONGODB_USERNAME', 'MONGODB_DB_NAME'],
+  required: [
+    'GITHUB_LOGIN_CLIENT_ID',
+    'GITHUB_LOGIN_CLIENT_SECRET',
+    'MONGODB_DB_NAME',
+    'MONGODB_PASSWORD',
+    'MONGODB_USERNAME'
+  ],
   type: 'object'
 };
 

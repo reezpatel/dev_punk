@@ -14,15 +14,9 @@ const MESSAGE_CHECK_DELAY = 300;
 const ONE = 1;
 const FIRST_MESSAGE = 0;
 
-const HOSTNAME = os.hostname();
-const KUBEMQ_URI = 'localhost:50000';
-const FEED_Q = 'devpunk_feeds';
-const IMAGE_Q = 'devpunk_image';
-
-const feedsQueue = new kubemq.MessageQueue(KUBEMQ_URI, FEED_Q, HOSTNAME);
-const imageQueue = new kubemq.MessageQueue(KUBEMQ_URI, IMAGE_Q, HOSTNAME);
-
-const addFeed = (logger: FastifyLoggerInstance) => async (feed: IFeeds) => {
+const addFeed = (imageQueue, logger: FastifyLoggerInstance) => async (
+  feed: IFeeds
+) => {
   try {
     const message = new kubemq.Message(
       feed.title,
@@ -40,7 +34,32 @@ const addFeed = (logger: FastifyLoggerInstance) => async (feed: IFeeds) => {
   }
 };
 
-const feedListener = async (logger: FastifyLoggerInstance, rss: RSSService) => {
+const addWebsite = (feedsQueue, logger: FastifyLoggerInstance) => async (
+  website: IWebsite
+) => {
+  try {
+    const message = new kubemq.Message(
+      website.name,
+      kubemq.stringToByte(JSON.stringify(website)),
+      []
+    );
+
+    await feedsQueue.sendQueueMessage(message);
+  } catch (e) {
+    logger.error({
+      message: e.message,
+      module: 'PubSub:: Add Website',
+      stack: e.stack
+    });
+  }
+};
+
+const feedListener = async (
+  feedsQueue,
+  imageQueue,
+  logger: FastifyLoggerInstance,
+  rss: RSSService
+) => {
   const feeds = await feedsQueue.receiveQueueMessages(ONE, ONE);
 
   if (feeds.Messages.length) {
@@ -63,7 +82,7 @@ const feedListener = async (logger: FastifyLoggerInstance, rss: RSSService) => {
       meta: {
         count: insertedFeeds.length,
         ids: insertedFeeds.map((feed) => {
-          addFeed(logger)(feed);
+          addFeed(imageQueue, logger)(feed);
 
           return feed._id;
         }),
@@ -75,6 +94,7 @@ const feedListener = async (logger: FastifyLoggerInstance, rss: RSSService) => {
 };
 
 const imageListener = async (
+  imageQueue,
   logger: FastifyLoggerInstance,
   storage: StorageService
 ) => {
@@ -107,14 +127,16 @@ const imageListener = async (
 };
 
 const attachMessageListener = (
+  feedsQueue,
+  imageQueue,
   logger: FastifyLoggerInstance,
   storage: StorageService,
   rss: RSSService
 ) => {
   const messageListener = async () => {
     try {
-      await feedListener(logger, rss);
-      await imageListener(logger, storage);
+      await feedListener(feedsQueue, imageQueue, logger, rss);
+      await imageListener(imageQueue, logger, storage);
     } catch (e) {
       logger.error({
         message: e.message,
@@ -129,33 +151,27 @@ const attachMessageListener = (
   messageListener();
 };
 
-const addWebsite = (logger: FastifyLoggerInstance) => async (
-  website: IWebsite
-) => {
-  try {
-    const message = new kubemq.Message(
-      website.name,
-      kubemq.stringToByte(JSON.stringify(website)),
-      []
-    );
-
-    await feedsQueue.sendQueueMessage(message);
-  } catch (e) {
-    logger.error({
-      message: e.message,
-      module: 'PubSub:: Add Website',
-      stack: e.stack
-    });
-  }
-};
-
 const pubsub = fp((fastify, _, next) => {
+  const HOSTNAME = os.hostname();
+  const KUBEMQ_URI = fastify.config.KUBEMQ_HOST;
+  const FEED_Q = 'devpunk_feeds';
+  const IMAGE_Q = 'devpunk_image';
+
+  const feedsQueue = new kubemq.MessageQueue(KUBEMQ_URI, FEED_Q, HOSTNAME);
+  const imageQueue = new kubemq.MessageQueue(KUBEMQ_URI, IMAGE_Q, HOSTNAME);
+
   fastify.decorate('pubsub', {
-    addFeed: addFeed(fastify.log),
-    addWebsite: addWebsite(fastify.log)
+    addFeed: addFeed(imageQueue, fastify.log),
+    addWebsite: addWebsite(feedsQueue, fastify.log)
   });
 
-  attachMessageListener(fastify.log, fastify.storage, fastify.rss);
+  attachMessageListener(
+    imageQueue,
+    feedsQueue,
+    fastify.log,
+    fastify.storage,
+    fastify.rss
+  );
 
   next();
 });
