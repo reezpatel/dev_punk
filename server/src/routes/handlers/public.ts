@@ -10,7 +10,7 @@ const resolvePath = (path): string => {
   const exist = existsSync(path);
 
   if (!exist) {
-    return '';
+    return join(PUBLIC_DIR, 'index.html');
   }
 
   const stat = statSync(path);
@@ -23,7 +23,7 @@ const resolvePath = (path): string => {
     return path;
   }
 
-  return '';
+  return join(PUBLIC_DIR, 'index.html');
 };
 
 const publicHandler: FastifyPluginCallback<Record<string, unknown>> = (
