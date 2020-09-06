@@ -70,6 +70,8 @@ const authHandlers: FastifyPluginCallback<Record<string, unknown>> = (
 
       if (!accessToken || !type) {
         res.send(reply(false, '', 'Invalid Credentials'));
+
+        return;
       }
 
       const { data: user } = await axios.get('https://api.github.com/user', {
@@ -85,7 +87,7 @@ const authHandlers: FastifyPluginCallback<Record<string, unknown>> = (
         token: Buffer.from(`${authUser._id}:${token}`).toString('base64')
       });
     } catch (e) {
-      res.send(reply(false, '', `Invalid Credentials :: ${e.message}`));
+      res.send(reply(false, '', `Error: ${e.message} ${e.stack} ${e}`));
     }
   });
 
