@@ -166,8 +166,8 @@ const pubsub = fp((fastify, _, next) => {
   });
 
   attachMessageListener(
-    imageQueue,
     feedsQueue,
+    imageQueue,
     fastify.log,
     fastify.storage,
     fastify.rss
