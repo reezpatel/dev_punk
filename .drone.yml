@@ -9,20 +9,20 @@ steps:
   - name: build-cache
     image: node:lts-alpine
     commands:
-      - "yarn install -W"
+      - 'yarn install -W'
   - name: lint
     image: node:lts-alpine
     commands:
-      - "yarn lint:website"
-      - "yarn lint:server"
+      - 'yarn lint:website'
+      - 'yarn lint:server'
   - name: build-website
     image: node:lts-alpine
     commands:
-      - "yarn workspace @devpunk/website build"
+      - 'API_SERVER_URL=/ NODE_ENV=production yarn workspace @devpunk/website build --experimental-scope-hoisting'
   - name: build-server
     image: node:lts-alpine
     commands:
-      - "yarn workspace @devpunk/server build"
+      - 'yarn workspace @devpunk/server build'
   - name: build-image
     image: plugins/docker
     settings:
