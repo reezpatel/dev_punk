@@ -18,8 +18,8 @@ const imageHandlers: FastifyPluginCallback<Record<string, unknown>> = (
   _,
   next
 ) => {
-  fastify.put<{ Body: WebsitePutBody }>('/website', (req, res) => {
-    const { id, image } = req.body;
+  fastify.put<{ Body: string }>('/website', (req, res) => {
+    const { id, image } = JSON.parse(req.body) as WebsitePutBody;
 
     fastify.storage.saveWebsiteImage(id, image);
     res.send({
