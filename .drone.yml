@@ -9,20 +9,20 @@ steps:
   - name: build-cache
     image: node:lts-alpine
     commands:
-      - 'yarn install -W'
+      - "yarn install -W"
   - name: lint
     image: node:lts-alpine
     commands:
-      - 'yarn lint:website'
-      - 'yarn lint:server'
+      - "yarn lint:website"
+      - "yarn lint:server"
   - name: build-website
     image: node:lts-alpine
     commands:
-      - 'API_SERVER_URL=https://www.devpunk.xyz NODE_ENV=production yarn workspace @devpunk/website build'
+      - "API_SERVER_URL=https://www.devpunk.xyz NODE_ENV=production yarn workspace @devpunk/website build"
   - name: build-server
     image: node:lts-alpine
     commands:
-      - 'yarn workspace @devpunk/server build'
+      - "yarn workspace @devpunk/server build"
   - name: build-image
     image: plugins/docker
     settings:
@@ -61,7 +61,7 @@ steps:
       - echo "$KUBECONFIG_FILE"
       - helm repo update
       - helm search repo dev
-      - helm upgrade --wait --install --atomic devpunk mychart/devpunk -n devpunk -f helm.values.yml --set-string image.tag="${DRONE_COMMIT:0:8}" --set-string env.MONGODB_PASSWORD="$MONGODB_PASSWORD" --set-string env.MONGODB_USERNAME="$MONGODB_USERNAME" --set-string env.MONGODB_HOST="$MONGODB_HOST" --set-string env.GITHUB_LOGIN_CLIENT_ID="$GITHUB_LOGIN_CLIENT_SECRET" --set-string env.GITHUB_LOGIN_CLIENT_SECRET="$GITHUB_LOGIN_CLIENT_SECRET" --set-string env.REDIS_HOST="$REDIS_HOST" --set-string env.KUBEMQ_HOST="$KUBEMQ_HOST"
+      - helm upgrade --wait --install --atomic devpunk mychart/devpunk -n devpunk -f helm.values.yml --set-string image.tag="${DRONE_COMMIT:0:8}" --set-string env.MONGODB_PASSWORD="$MONGODB_PASSWORD" --set-string env.MONGODB_USERNAME="$MONGODB_USERNAME" --set-string env.MONGODB_HOST="$MONGODB_HOST" --set-string env.GITHUB_LOGIN_CLIENT_ID="$GITHUB_LOGIN_CLIENT_ID" --set-string env.GITHUB_LOGIN_CLIENT_SECRET="$GITHUB_LOGIN_CLIENT_SECRET" --set-string env.REDIS_HOST="$REDIS_HOST" --set-string env.KUBEMQ_HOST="$KUBEMQ_HOST"
     # when:
     #   event:
     #     - promote
