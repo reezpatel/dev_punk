@@ -27,7 +27,7 @@ type Feed {
   publishedAt: String
   author: String
   tags: [String!]
-  website: Website!
+  website: Website
 }
 
 type User {

@@ -44,11 +44,9 @@ const getAccessTokenFromGithub = async (clientId, clientSecret, code) => {
   return [accessToken, type];
 };
 
-const authHandlers: FastifyPluginCallback<Record<string, unknown>> = (
-  fastify,
-  _,
-  next
-) => {
+type authHandlers = FastifyPluginCallback<Record<string, unknown>>;
+
+const authHandlers: authHandlers = (fastify, _, next) => {
   fastify.get('/validate', async (req, res) => {
     if (!req.headers.authorization?.startsWith('Bearer ')) {
       res.send(reply(false, '', 'Invalid Auth Header'));
@@ -60,6 +58,7 @@ const authHandlers: FastifyPluginCallback<Record<string, unknown>> = (
     res.send(reply(isValid, 'Authenticated', 'Authentication Error'));
   });
 
+  // eslint-disable-next-line max-statements
   fastify.get<{ Params: { code: string } }>('/:code', async (req, res) => {
     try {
       const [accessToken, type] = await getAccessTokenFromGithub(
@@ -67,6 +66,8 @@ const authHandlers: FastifyPluginCallback<Record<string, unknown>> = (
         fastify.config.GITHUB_LOGIN_CLIENT_SECRET,
         req.params.code
       );
+
+      fastify.log.info(`D_TYPE => ${type}`);
 
       if (!accessToken || !type) {
         res.send(reply(false, '', 'Invalid Credentials'));
@@ -87,7 +88,7 @@ const authHandlers: FastifyPluginCallback<Record<string, unknown>> = (
         token: Buffer.from(`${authUser._id}:${token}`).toString('base64')
       });
     } catch (e) {
-      res.send(reply(false, '', `Error: ${e.message} ${e.stack} ${e}`));
+      res.send(reply(false, '', `Error: ${e.message} ${e.stack}`));
     }
   });
 
