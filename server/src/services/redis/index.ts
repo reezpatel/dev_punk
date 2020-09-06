@@ -12,11 +12,9 @@ interface RedisService {
   validateUserToken: validateUserToken;
 }
 
-const instance = new Redis({
-  keyPrefix: 'devpunk_'
-});
-
-const generateUserToken: generateUserToken = async (id) => {
+const generateUserToken: (instance: Redis.Redis) => generateUserToken = (
+  instance
+) => async (id) => {
   const token = nanoid();
 
   await instance.set(`token_${token}`, id);
@@ -24,20 +22,28 @@ const generateUserToken: generateUserToken = async (id) => {
   return token;
 };
 
-const validateUserToken: validateUserToken = async (id, token) => {
+const validateUserToken: (instance: Redis.Redis) => validateUserToken = (
+  instance
+) => async (id, token) => {
   const user = await instance.get(`token_${token}`);
 
   return user === id;
 };
 
-const destroyUserToken: destroyUserToken = (token) =>
-  instance.del(`token_${token}`);
+const destroyUserToken: (instance: Redis.Redis) => destroyUserToken = (
+  instance
+) => (token) => instance.del(`token_${token}`);
 
 const redis = fp((fastify, _, next) => {
+  const instance = new Redis({
+    host: fastify.config.REDIS_HOST,
+    keyPrefix: 'devpunk_'
+  });
+
   fastify.decorate('redis', {
-    destroyUserToken,
-    generateUserToken,
-    validateUserToken
+    destroyUserToken: destroyUserToken(instance),
+    generateUserToken: generateUserToken(instance),
+    validateUserToken: validateUserToken(instance)
   });
 
   next();
