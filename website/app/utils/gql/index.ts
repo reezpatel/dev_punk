@@ -7,7 +7,9 @@ import {
   EDIT_WEBSITE_MUTATION,
   DELETE_WEBSITE_MUTATION,
   DELETE_FEED_MUTATION,
-  GET_USER_QUERY
+  GET_USER_QUERY,
+  UPDATE_PIN_MUTATION,
+  UPDATE_FAVORITES_MUTATION
 } from './query';
 import ENDPOINTS from '../endpoints';
 
@@ -44,14 +46,16 @@ async function executeQuery<Type>(
 
 async function executeMutation<Type>(
   mutation: DocumentNode,
-  variables?: OperationVariables
+  variables?: OperationVariables,
+  context?: Record<string, unknown>
 ): Promise<Type> {
   let result;
   try {
     result = await client.mutate<Type>({
       mutation,
       variables,
-      fetchPolicy: 'no-cache'
+      fetchPolicy: 'no-cache',
+      context
     });
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -113,6 +117,34 @@ const getUser = async (token: string): Promise<User> => {
   });
 };
 
+const updatePins = async (token: string, ids: string[]): Promise<User> => {
+  return executeMutation<User>(
+    UPDATE_PIN_MUTATION,
+    {
+      ids
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+};
+
+const updateFavorites = async (token: string, ids: string[]): Promise<User> => {
+  return executeMutation<User>(
+    UPDATE_FAVORITES_MUTATION,
+    {
+      ids
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
+};
+
 export {
   getAllWebsites,
   editWebsite,
@@ -120,5 +152,7 @@ export {
   deleteFeed,
   deleteWebsite,
   getFeeds,
-  getUser
+  getUser,
+  updatePins,
+  updateFavorites
 };

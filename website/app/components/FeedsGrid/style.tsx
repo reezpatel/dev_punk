@@ -5,6 +5,8 @@ const FeedsContainer = styled.div<{ columns: number }>`
   display: grid;
   grid-template-columns: repeat(${(props) => props.columns}, 4fr);
   column-gap: 15px;
+  overflow: scroll;
+  padding: 25px;
 `;
 
 const FeedColumns = styled.div``;

@@ -66,11 +66,11 @@ const loaders = (db: DBController) => ({
     }
   },
   User: {
-    favorites(requests: { obj: IUser }[]) {
-      return db.resolveFavorites(requests[ZERO_INDEX].obj.favorites);
+    async favorites(requests: { obj: IUser }[]) {
+      return [await db.resolveFavorites(requests[ZERO_INDEX].obj.favorites)];
     },
-    pins(requests: { obj: IUser }[]) {
-      return db.resolvePins(requests[ZERO_INDEX].obj.pins);
+    async pins(requests: { obj: IUser }[]) {
+      return [await db.resolvePins(requests[ZERO_INDEX].obj.pins)];
     }
   }
 });

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import gql from 'graphql-tag';
 
 const GET_ALL_WEBSITE_QUERY = gql`
@@ -77,10 +78,52 @@ const GET_USER_QUERY = gql`
     items: user {
       name
       favorites {
+        _id
         title
       }
       pins {
+        _id
         name
+      }
+      error
+    }
+  }
+`;
+
+const UPDATE_PIN_MUTATION = gql`
+  mutation($ids: [String]!) {
+    item: updatePins(ids: $ids) {
+      name
+      favorites {
+        _id
+        title
+      }
+      pins {
+        _id
+        name
+        website
+      }
+      error
+    }
+  }
+`;
+
+const UPDATE_FAVORITES_MUTATION = gql`
+  mutation($ids: [String!]!) {
+    item: updateFavorites(ids: $ids) {
+      name
+      favorites {
+        _id
+        title
+        website {
+          _id
+          name
+        }
+      }
+      pins {
+        _id
+        name
+        website
       }
       error
     }
@@ -94,5 +137,7 @@ export {
   EDIT_WEBSITE_MUTATION,
   DELETE_WEBSITE_MUTATION,
   DELETE_FEED_MUTATION,
-  GET_USER_QUERY
+  GET_USER_QUERY,
+  UPDATE_FAVORITES_MUTATION,
+  UPDATE_PIN_MUTATION
 };

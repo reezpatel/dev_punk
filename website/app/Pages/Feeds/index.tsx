@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Website } from '@devpunk/types';
 import { Header, WebsiteList, FeedsGrid } from '../../components';
 // import WebsiteList from '../../components/WebsiteList';
-// import SearchBar from '../../components/SearchBar';
+import SearchBar from '../../components/SearchBar';
 // import { useUserContext } from '../../context';
 import { getFeedColumnCount, gql } from '../../utils';
 
@@ -11,10 +11,13 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: 300px 1fr;
   height: calc(100vh - 68px);
+  overflow: hidden;
 `;
 
 const FeedContainer = styled.div`
-  padding: 25px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 80px 1fr;
 `;
 
 const FeedsPage = (): JSX.Element => {
@@ -61,7 +64,7 @@ const FeedsPage = (): JSX.Element => {
           websites={websites}
         />
         <FeedContainer>
-          {/* <SearchBar /> */}
+          <SearchBar />
 
           <FeedsGrid
             website={websites[selected]?._id}

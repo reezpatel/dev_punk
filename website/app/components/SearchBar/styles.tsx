@@ -12,6 +12,7 @@ const Bar = styled.div`
   justify-items: center;
   column-gap: 15px;
   max-width: 720px;
+  margin: 25px;
 `;
 
 const SearchInput = styled.input`

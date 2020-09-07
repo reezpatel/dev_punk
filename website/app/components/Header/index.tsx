@@ -56,7 +56,7 @@ const Header: Header = ({ showMenuIcon, onMenuClick }) => {
         visibility={showMenuIcon ? '' : 'hidden'}
       />
       <AppIcon src={Icon} />
-      <AppHeading>Devpunk</AppHeading>
+      <AppHeading>{process.env.APPLICATION_NAME}</AppHeading>
       <HeaderOptions>
         {user.user.isLoggedIn ? (
           <HeaderOption onClick={handleLogout}>

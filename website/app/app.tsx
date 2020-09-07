@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { useUserContext } from './context';
-import { request } from './utils';
+import { request, gql } from './utils';
 import { FullScreenLoader } from './components';
 import { FeedsPage, AuthPage, AdminPage } from './Pages';
 
@@ -17,11 +17,9 @@ const App = (): JSX.Element => {
       const token = window.localStorage.getItem('AUTH_TOKEN');
 
       if (await request.validateAuthToken(token)) {
-        user.login(token);
+        const userData = await gql.getUser(token);
 
-        // TODO Add user data to state
-        // const userData = await gql.getUser(token);
-        // console.log(userData);
+        user.login(token, userData.pins, userData.favorites);
       } else {
         user.logout();
       }

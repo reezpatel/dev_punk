@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 const Container = styled.div`
   background-color: #f6f5fa;
-  padding: 24px;
   color: #3b4246;
+  overflow: hidden;
 `;
 
 const Heading = styled.h4`
@@ -31,10 +31,14 @@ const HeadSection = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  padding: 24px;
 `;
 
-const ContentSection = styled.div``;
+const ContentSection = styled.div`
+  height: calc(100vh - 171px);
+  overflow-y: scroll;
+  overflow-x: hidden;
+`;
 
 const EmptyBlock = styled.div`
   display: flex;

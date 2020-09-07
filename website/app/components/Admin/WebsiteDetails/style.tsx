@@ -1,13 +1,16 @@
 import styled from 'styled-components';
 
 const Container = styled.div`
-  padding: 25px;
+  display: grid;
+  overflow: hidden;
+  grid-template-rows: 160px 1fr;
 `;
 
 const WebsiteInfo = styled.div`
   background-color: #f6f5fa;
   padding: 25px;
   border-radius: 17px;
+  margin: 25px;
 `;
 const WebsiteDetailsContainer = styled.div``;
 const WebsiteTitle = styled.p`

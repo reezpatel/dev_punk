@@ -4,6 +4,7 @@ import { TiPin, TiPinOutline } from 'react-icons/ti';
 import { useUserContext } from '../../context';
 import {
   WebsiteContainer,
+  WebsiteListContainer,
   Title,
   WebsiteItem,
   WebsiteIcon,
@@ -84,41 +85,42 @@ const WebsiteList: WebsiteList = ({ websites, selected, onChange }) => {
   return (
     <WebsiteContainer>
       <Title>Feeds</Title>
+      <WebsiteListContainer>
+        <WebsiteItem
+          selected={selected === PINNED_WEBSITE}
+          key="favorites"
+          onClick={handleWebsiteSelection(PINNED_WEBSITE)}
+        >
+          <WebsiteIcon src={CONFIG.ENDPOINTS.websiteIcon('pins')} />
+          <WebsiteText>Favorites</WebsiteText>
+        </WebsiteItem>
 
-      <WebsiteItem
-        selected={selected === PINNED_WEBSITE}
-        key="favorites"
-        onClick={handleWebsiteSelection(PINNED_WEBSITE)}
-      >
-        <WebsiteIcon src={CONFIG.ENDPOINTS.websiteIcon('pins')} />
-        <WebsiteText>Favorites</WebsiteText>
-      </WebsiteItem>
+        <WebsiteItem
+          selected={selected === ALL_WEBSITE}
+          key="all"
+          onClick={handleWebsiteSelection(ALL_WEBSITE)}
+        >
+          <WebsiteIcon src={CONFIG.ENDPOINTS.websiteIcon('all')} />
+          <WebsiteText>Daily Feeds</WebsiteText>
+        </WebsiteItem>
 
-      <WebsiteItem
-        selected={selected === ALL_WEBSITE}
-        key="all"
-        onClick={handleWebsiteSelection(ALL_WEBSITE)}
-      >
-        <WebsiteIcon src={CONFIG.ENDPOINTS.websiteIcon('all')} />
-        <WebsiteText>Daily Feeds</WebsiteText>
-      </WebsiteItem>
-
-      {websiteList.length !== 0 &&
-        websiteList.map((website, index) => (
-          <WebsiteItem
-            selected={index === selected}
-            key={website._id}
-            onClick={handleWebsiteSelection(index)}
-          >
-            <WebsiteIcon src={CONFIG.ENDPOINTS.websiteIcon(website._id)} />
-            <WebsiteText>{website.name}</WebsiteText>
-            {user.user.isLoggedIn && (
-              <WebsiteAction onClick={handleButtonPin(website)}>
-                {pinnedWebsite[website._id] ? <TiPin /> : <TiPinOutline />}
-              </WebsiteAction>
-            )}
-          </WebsiteItem>
-        ))}
+        {websiteList.length !== 0 &&
+          websiteList.map((website, index) => (
+            <WebsiteItem
+              selected={index === selected}
+              key={website._id}
+              onClick={handleWebsiteSelection(index)}
+            >
+              <WebsiteIcon src={CONFIG.ENDPOINTS.websiteIcon(website._id)} />
+              <WebsiteText>{website.name}</WebsiteText>
+              {user.user.isLoggedIn && (
+                <WebsiteAction onClick={handleButtonPin(website)}>
+                  {pinnedWebsite[website._id] ? <TiPin /> : <TiPinOutline />}
+                </WebsiteAction>
+              )}
+            </WebsiteItem>
+          ))}
+      </WebsiteListContainer>
     </WebsiteContainer>
   );
 };

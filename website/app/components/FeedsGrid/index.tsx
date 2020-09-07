@@ -15,7 +15,8 @@ import {
 import { getRelativeTime, CONFIG, gql, colors } from '../../utils';
 import { useUserContext } from '../../context';
 
-const BATCH_SIZE = 1;
+const BATCH_SIZE = 2;
+const LOAD_OFFSET = 600;
 
 interface FeedsGridProps {
   website: string;
@@ -72,6 +73,14 @@ const FeedsGrid: FeedsGrid = ({ website, columns, selected }) => {
     }
 
     lock.current = false;
+  };
+
+  const handleOnScroll = () => {
+    const { scrollHeight, scrollTop, clientHeight } = containerRef.current;
+
+    if (scrollHeight - (scrollTop + clientHeight) < LOAD_OFFSET) {
+      loadFeeds();
+    }
   };
 
   const renderFeeds = () => {
@@ -134,6 +143,10 @@ const FeedsGrid: FeedsGrid = ({ website, columns, selected }) => {
     if (!lock.current && feeds.length) {
       renderFeeds();
     }
+
+    if (!lock.current && !feeds.length) {
+      handleOnScroll();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feeds]);
 
@@ -163,6 +176,7 @@ const FeedsGrid: FeedsGrid = ({ website, columns, selected }) => {
 
   return (
     <FeedsContainer
+      onScroll={handleOnScroll}
       ref={(r) => {
         containerRef.current = r;
       }}

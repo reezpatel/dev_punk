@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Website, Feeds } from '@devpunk/types';
 import { MdTimer } from 'react-icons/md';
 import { FiPenTool, FiTrash2 } from 'react-icons/fi';
@@ -20,6 +20,8 @@ import {
 import { Row } from '../../UI';
 import { getRelativeTime, gql, CONFIG } from '../../../utils';
 
+const LOAD_OFFSET = 600;
+
 interface FeedsListProps {
   website: Website;
 }
@@ -27,23 +29,56 @@ interface FeedsListProps {
 type FeedsList = (props: FeedsListProps) => JSX.Element;
 
 const FeedsList: FeedsList = ({ website }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [page, setPage] = useState(1);
   const [feeds, setFeeds] = useState<Feeds[]>([]);
+  const containerRef = useRef<HTMLDivElement>();
+  const lock = useRef<boolean>(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const loadFeeds = async () => {
+    if (lock.current || !hasMore) {
+      return;
+    }
+
+    lock.current = true;
     const data = await gql.getFeeds(page, website._id);
+
+    if (data.length === 0) {
+      setHasMore(false);
+    }
+
     if (page === 1) {
       setFeeds(data);
     } else {
       setFeeds([...feeds, ...data]);
     }
+
+    setPage(page + 1);
+
+    lock.current = false;
+  };
+
+  const handleOnScroll = () => {
+    const { scrollHeight, scrollTop, clientHeight } = containerRef.current;
+
+    if (scrollHeight - (scrollTop + clientHeight) < LOAD_OFFSET) {
+      loadFeeds();
+    }
   };
 
   useEffect(() => {
-    loadFeeds();
+    if (feeds.length === 0) {
+      loadFeeds();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [website, page]);
+  }, [feeds]);
+
+  useEffect(() => {
+    setHasMore(true);
+    setPage(1);
+    setFeeds([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [website]);
 
   const handleFeedsDelete = (feed: Feeds) => () => {
     gql
@@ -63,7 +98,12 @@ const FeedsList: FeedsList = ({ website }) => {
   };
 
   return (
-    <Container>
+    <Container
+      onScroll={handleOnScroll}
+      ref={(r) => {
+        containerRef.current = r;
+      }}
+    >
       {feeds.length !== 0 &&
         feeds.map((feed) => (
           <FeedsContainer key={feed._id}>

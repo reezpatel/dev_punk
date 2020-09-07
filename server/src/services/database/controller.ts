@@ -207,7 +207,7 @@ class DBController {
       }
 
       user.favorites = feeds;
-      this.Users.updateOne({ _id: id }, user);
+      await this.Users.updateOne({ _id: id }, user);
 
       return user;
     } catch (e) {
@@ -227,7 +227,7 @@ class DBController {
       }
 
       user.pins = website;
-      this.Users.updateOne({ _id: id }, user);
+      await this.Users.updateOne({ _id: id }, user);
 
       return user;
     } catch (e) {

@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
-const Container = styled.div``;
+const Container = styled.div`
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding: 0 25px;
+`;
 
 const FeedsContainer = styled.div`
   margin: 15px 0;
@@ -59,6 +63,7 @@ const FeedMetaText = styled.p`
 const FeedActionContainer = styled.div`
   align-self: center;
   justify-self: center;
+  margin-right: 24px;
 `;
 
 const FeedActionDelete = styled.button`

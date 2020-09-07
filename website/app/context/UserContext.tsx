@@ -2,6 +2,7 @@
 import React, { useState, useCallback } from 'react';
 import constate from 'constate';
 import { User, Feeds, Website } from '@devpunk/types';
+import { gql } from '../utils';
 
 interface UserState extends User {
   isLoggedIn: boolean;
@@ -9,7 +10,7 @@ interface UserState extends User {
 
 interface UserHook {
   user: UserState;
-  login: (token: string) => void;
+  login: (token: string, pins?: Website[], favorites?: Feeds[]) => void;
   logout: () => void;
   setFavorites: (favorites: Feeds[]) => void;
   setPins: (pins: Website[]) => void;
@@ -24,9 +25,14 @@ const useUser = () => {
   });
 
   const login = useCallback(
-    (token: string) => {
+    (token: string, pins?: Website[], favorites?: Feeds[]) => {
       window.localStorage.setItem('AUTH_TOKEN', token);
-      setUser({ ...user, isLoggedIn: true });
+      setUser({
+        ...user,
+        isLoggedIn: true,
+        pins: pins || user.pins,
+        favorites: favorites || user.favorites
+      });
     },
     [user]
   );
@@ -37,19 +43,31 @@ const useUser = () => {
     setUser({ ...user, isLoggedIn: false });
   }, [user]);
 
-  const setFavorites = (favorites: Feeds[]) => {
-    // TODO: Update Favs in Server
+  const setFavorites = async (favorites: Feeds[]) => {
+    const ids = favorites.map((p) => p._id);
+
+    const data = await gql.updateFavorites(
+      window.localStorage.getItem('AUTH_TOKEN'),
+      ids
+    );
+
     setUser({
       ...user,
-      favorites
+      favorites: data.favorites
     });
   };
 
-  const setPins = (pins: Website[]) => {
-    // TODO: Update Pins in Server
+  const setPins = async (pins: Website[]) => {
+    const ids = pins.map((p) => p._id);
+
+    const data = await gql.updatePins(
+      window.localStorage.getItem('AUTH_TOKEN'),
+      ids
+    );
+
     setUser({
       ...user,
-      pins
+      pins: data.pins
     });
   };
 

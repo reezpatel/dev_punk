@@ -2,6 +2,13 @@ import styled from 'styled-components';
 
 const WebsiteContainer = styled.div`
   background-color: #f6f5fa;
+  display: grid;
+  grid-template-rows: 90px 1fr;
+`;
+
+const WebsiteListContainer = styled.div`
+  overflow: scroll;
+  height: calc(100vh - 141px);
 `;
 
 const Title = styled.h3`
@@ -49,6 +56,7 @@ const WebsiteAction = styled.div`
 
 export {
   WebsiteContainer,
+  WebsiteListContainer,
   Title,
   WebsiteItem,
   WebsiteIcon,

@@ -15,6 +15,7 @@ const Container = styled.div`
   display: grid;
   grid-template-columns: 300px 1fr;
   height: calc(100vh - 68px);
+  overflow: hidden;
 `;
 
 const AdminPage = (): JSX.Element => {
