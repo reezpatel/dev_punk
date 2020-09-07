@@ -16,8 +16,8 @@ const GET_ALL_WEBSITE_QUERY = gql`
 `;
 
 const GET_PAGINATED_FEEDS_QUERY = gql`
-  query($page: Int!, $website: String) {
-    items: feeds(page: $page, website: $website) {
+  query($page: Int!, $website: String, $query: String) {
+    items: feeds(page: $page, website: $website, query: $query) {
       _id
       title
       author

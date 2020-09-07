@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaSearch } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import { SearchContainer, Bar, SearchInput } from './styles';
 
-const SearchBar = (): JSX.Element => {
-  const [input, setInput] = useState('');
+interface SearchBarProps {
+  value: string;
+  onChange: (str: string) => void;
+}
 
+type SearchBar = (props: SearchBarProps) => JSX.Element;
+
+const SearchBar: SearchBar = ({ value, onChange }): JSX.Element => {
   const handleInput = (e) => {
-    setInput(e.target.value);
+    onChange(e.target.value);
   };
 
   const clearInput = () => {
-    setInput('');
+    onChange('');
   };
 
   return (
@@ -20,11 +25,11 @@ const SearchBar = (): JSX.Element => {
         <FaSearch color="#868686" />
         <SearchInput
           type="text"
-          value={input}
+          value={value}
           onChange={handleInput}
           placeholder="Type in to Search..."
         />
-        {input && (
+        {value && (
           <IoMdClose cursor="pointer" onClick={clearInput} color="#868686" />
         )}
       </Bar>

@@ -22,6 +22,7 @@ interface FeedsGridProps {
   website: string;
   selected: number;
   columns?: number;
+  query: string;
 }
 
 type FeedsGrid = (props: FeedsGridProps) => JSX.Element;
@@ -32,7 +33,7 @@ const getEmptyData = (columns: number) => {
     .map(() => []);
 };
 
-const FeedsGrid: FeedsGrid = ({ website, columns, selected }) => {
+const FeedsGrid: FeedsGrid = ({ website, columns, selected, query }) => {
   const [feeds, setFeeds] = useState<Feeds[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -55,9 +56,9 @@ const FeedsGrid: FeedsGrid = ({ website, columns, selected }) => {
       entries = user.user.favorites;
       setHasMore(false);
     } else if (selected === CONFIG.WEBSITE_IDS.ALL_WEBSITE) {
-      entries = await gql.getFeeds(page);
+      entries = await gql.getFeeds(page, '', query);
     } else {
-      entries = await gql.getFeeds(page, website);
+      entries = await gql.getFeeds(page, website, query);
     }
 
     setPage(page + 1);
@@ -168,7 +169,7 @@ const FeedsGrid: FeedsGrid = ({ website, columns, selected }) => {
     setHasMore(true);
     setData(getEmptyData(columns));
     setPage(1);
-  }, [columns, website, selected]);
+  }, [columns, website, selected, query]);
 
   const handleFeedClick = (id: string) => () => {
     window.open(CONFIG.ENDPOINTS.redirect(id));

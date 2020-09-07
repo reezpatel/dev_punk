@@ -78,10 +78,15 @@ const getAllWebsites = async (): Promise<Website[]> => {
   return executeQuery<Website[]>(GET_ALL_WEBSITE_QUERY);
 };
 
-const getFeeds = async (page: number, website?: string): Promise<Feeds[]> => {
+const getFeeds = async (
+  page: number,
+  website?: string,
+  query?: string
+): Promise<Feeds[]> => {
   return executeQuery<Feeds[]>(GET_PAGINATED_FEEDS_QUERY, {
     page,
-    website
+    website,
+    query
   });
 };
 
