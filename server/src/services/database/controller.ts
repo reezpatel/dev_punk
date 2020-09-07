@@ -10,10 +10,11 @@ import {
   MongooseError
 } from 'src/types/database';
 
-const RPP = 10;
+const RPP = 30;
 const DELTA = 1;
 const DELETE_COUNT = 1;
 const FIRST_INDEX = 0;
+const MAX_QUERY_LENGTH = 25;
 
 class DBController {
   private Websites: Model<IWebsite, Record<string, unknown>>;
@@ -60,7 +61,7 @@ class DBController {
 
   async getAllWebsites(): Promise<IWebsite[] | ErrorResponse> {
     try {
-      const websites = await this.Websites.find();
+      const websites = await this.Websites.find().sort({ name: 1, order: -1 });
 
       return websites;
     } catch (e) {
@@ -68,7 +69,7 @@ class DBController {
     }
   }
 
-  async addNewWebsite(website: Website): Promise<IWebsite | ErrorResponse> {
+  async addNewWebsite(website: Website): Promise<Website | ErrorResponse> {
     try {
       const doc = await this.Websites.findOne({ feed: website.feed });
 
@@ -77,12 +78,16 @@ class DBController {
           error: `Website ${doc.name} already exist for provided feed`
         };
       }
-      const res = await new this.Websites({
+
+      await new this.Websites({
         _id: new mongoose.Types.ObjectId(),
         ...website
       }).save();
 
-      return res;
+      return {
+        _id: new mongoose.Types.ObjectId(),
+        ...website
+      };
     } catch (e) {
       return this.handleError(e);
     }
@@ -135,20 +140,22 @@ class DBController {
 
   async getFeeds(
     page: number,
-    website: string
+    website: string,
+    search: string
   ): Promise<IFeeds[] | ErrorResponse> {
     try {
-      if (website) {
-        const feeds = await this.Feeds.find({
-          website
-        })
-          .limit(RPP)
-          .skip((page - DELTA) * RPP);
+      const query: Record<string, unknown> = {};
 
-        return feeds;
+      if (website) {
+        query.website = website;
       }
 
-      return await this.Feeds.find()
+      if (search && search.length < MAX_QUERY_LENGTH) {
+        query.title = { $regex: search };
+      }
+
+      return await this.Feeds.find(query)
+        .sort({ publishedAt: -1 })
         .limit(RPP)
         .skip((page - DELTA) * RPP);
     } catch (e) {

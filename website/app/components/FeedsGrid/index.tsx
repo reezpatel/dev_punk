@@ -190,19 +190,21 @@ const FeedsGrid: FeedsGrid = ({ website, columns, selected }) => {
               <FeedImage src={CONFIG.ENDPOINTS.feedBanner(feed._id)} />
               <FeedDetails>
                 <FeedsTitle>{feed.title}</FeedsTitle>
-                <FeedsMeta>
-                  <FeedMetaTitle>
-                    {getRelativeTime(feed.publishedAt || feed.createdAt)}
-                    {feed.author ? ` • ${feed.author}` : ''}
-                  </FeedMetaTitle>
-                  <FeedMetaAction onClick={handleHeartClick(feed)}>
-                    {favorites[feed._id] ? (
-                      <IoMdHeart color={colors.heartColor} />
-                    ) : (
-                      <IoMdHeartEmpty />
-                    )}
-                  </FeedMetaAction>
-                </FeedsMeta>
+                {user.user.isLoggedIn && (
+                  <FeedsMeta>
+                    <FeedMetaTitle>
+                      {getRelativeTime(feed.publishedAt || feed.createdAt)}
+                      {feed.author ? ` • ${feed.author}` : ''}
+                    </FeedMetaTitle>
+                    <FeedMetaAction onClick={handleHeartClick(feed)}>
+                      {favorites[feed._id] ? (
+                        <IoMdHeart color={colors.heartColor} />
+                      ) : (
+                        <IoMdHeartEmpty />
+                      )}
+                    </FeedMetaAction>
+                  </FeedsMeta>
+                )}
               </FeedDetails>
             </FeedBlock>
           ))}

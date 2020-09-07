@@ -9,8 +9,8 @@ const ZERO_INDEX = 0;
 const FIRST_INDEX = 1;
 
 const queries = (db: DBController) => ({
-  feeds(_, { page, website }) {
-    return db.getFeeds(page, website);
+  feeds(_, { page, website, query }) {
+    return db.getFeeds(page, website, query);
   },
   user(_, __, ctx) {
     if (!ctx.isAuthenticated) {

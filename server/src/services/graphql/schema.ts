@@ -46,7 +46,7 @@ type Action {
 type Query {
   website: Website
   websites: [Website!]!
-  feeds(page: Int!, website: String): [Feed!]!
+  feeds(page: Int!, website: String, query: String): [Feed!]!
   user: User
 }
 

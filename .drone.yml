@@ -18,7 +18,7 @@ steps:
   - name: build-website
     image: node:lts-alpine
     commands:
-      - "API_SERVER_URL=https://www.devpunk.xyz NODE_ENV=production yarn workspace @devpunk/website build"
+      - "APPLICATION_NAME=Devpunk API_SERVER_URL=https://www.devpunk.xyz NODE_ENV=production yarn workspace @devpunk/website build"
   - name: build-server
     image: node:lts-alpine
     commands:
