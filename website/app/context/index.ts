@@ -1,4 +1,4 @@
-import { useUserContext } from './UserContext';
+import { useUserContext, UserProvider } from './UserContext';
+import { useDeviceContext, DeviceProvider } from './DeviceContect';
 
-// eslint-disable-next-line import/prefer-default-export
-export { useUserContext };
+export { useUserContext, UserProvider, useDeviceContext, DeviceProvider };

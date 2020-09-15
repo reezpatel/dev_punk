@@ -15,7 +15,7 @@ import Login from '../Login';
 
 interface HeaderProps {
   showMenuIcon: boolean;
-  onMenuClick: () => void;
+  onMenuClick: (showMenu: boolean) => void;
 }
 
 type Header = (props: HeaderProps) => JSX.Element;
@@ -43,7 +43,7 @@ const Header: Header = ({ showMenuIcon, onMenuClick }) => {
   };
 
   const handleMenuClick = () => {
-    onMenuClick();
+    onMenuClick(!isOpen);
   };
 
   return (

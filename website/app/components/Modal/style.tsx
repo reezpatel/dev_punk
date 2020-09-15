@@ -14,11 +14,12 @@ const Wrapper = styled.div`
 `;
 const Container = styled.div`
   background-color: white;
-  min-width: 660px;
+  width: 660px;
   min-height: 380px;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
+  max-width: 90vw;
 `;
 
 const Header = styled.div`

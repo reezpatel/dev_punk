@@ -13,7 +13,7 @@ import {
   FeedMetaAction
 } from './style';
 import { getRelativeTime, CONFIG, gql, colors } from '../../utils';
-import { useUserContext } from '../../context';
+import { useDeviceContext, useUserContext } from '../../context';
 
 const BATCH_SIZE = 2;
 const LOAD_OFFSET = 600;
@@ -40,6 +40,7 @@ const FeedsGrid: FeedsGrid = ({ website, columns, selected, query }) => {
   const lock = useRef(false);
   const containerRef = useRef<HTMLDivElement>();
   const user = useUserContext();
+  const device = useDeviceContext();
   const [favorites, setFavorites] = useState<Record<string, boolean>>({});
 
   const [data, setData] = useState<Feeds[][]>(getEmptyData(columns));
@@ -169,7 +170,7 @@ const FeedsGrid: FeedsGrid = ({ website, columns, selected, query }) => {
     setHasMore(true);
     setData(getEmptyData(columns));
     setPage(1);
-  }, [columns, website, selected, query]);
+  }, [columns, website, selected, query, device]);
 
   const handleFeedClick = (id: string) => () => {
     window.open(CONFIG.ENDPOINTS.redirect(id));
@@ -191,12 +192,12 @@ const FeedsGrid: FeedsGrid = ({ website, columns, selected, query }) => {
               <FeedImage src={CONFIG.ENDPOINTS.feedBanner(feed._id)} />
               <FeedDetails>
                 <FeedsTitle>{feed.title}</FeedsTitle>
-                {user.user.isLoggedIn && (
-                  <FeedsMeta>
-                    <FeedMetaTitle>
-                      {getRelativeTime(feed.publishedAt || feed.createdAt)}
-                      {feed.author ? ` • ${feed.author}` : ''}
-                    </FeedMetaTitle>
+                <FeedsMeta>
+                  <FeedMetaTitle>
+                    {getRelativeTime(feed.publishedAt || feed.createdAt)}
+                    {feed.author ? ` • ${feed.author}` : ''}
+                  </FeedMetaTitle>
+                  {user.user.isLoggedIn && (
                     <FeedMetaAction onClick={handleHeartClick(feed)}>
                       {favorites[feed._id] ? (
                         <IoMdHeart color={colors.heartColor} />
@@ -204,8 +205,8 @@ const FeedsGrid: FeedsGrid = ({ website, columns, selected, query }) => {
                         <IoMdHeartEmpty />
                       )}
                     </FeedMetaAction>
-                  </FeedsMeta>
-                )}
+                  )}
+                </FeedsMeta>
               </FeedDetails>
             </FeedBlock>
           ))}

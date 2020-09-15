@@ -45,8 +45,8 @@ const getFeedColumnCount = (): number => {
 
 const CONFIG = {
   BREAKPOINTS: {
-    mobile: 600,
-    tablet: 768,
+    mobile: 480,
+    tablet: 1080,
     desktop: 1200
   },
   ENDPOINTS,

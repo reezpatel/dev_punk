@@ -19,11 +19,17 @@ interface WebsiteListProps {
   websites: Website[];
   selected: number;
   onChange: (index: number) => void;
+  visible: boolean;
 }
 
 type WebsiteList = (props: WebsiteListProps) => JSX.Element;
 
-const WebsiteList: WebsiteList = ({ websites, selected, onChange }) => {
+const WebsiteList: WebsiteList = ({
+  websites,
+  selected,
+  onChange,
+  visible
+}) => {
   const handleWebsiteSelection = (index) => () => {
     onChange(index);
   };
@@ -83,7 +89,7 @@ const WebsiteList: WebsiteList = ({ websites, selected, onChange }) => {
   }, [user, websites]);
 
   return (
-    <WebsiteContainer>
+    <WebsiteContainer visible={visible}>
       <Title>Feeds</Title>
       <WebsiteListContainer>
         <WebsiteItem

@@ -3,10 +3,12 @@ import styled from 'styled-components';
 const FeedsContainer = styled.div<{ columns: number }>`
   margin-top: 20px;
   display: grid;
-  grid-template-columns: repeat(${(props) => props.columns}, 4fr);
+  grid-template-columns: repeat(${(props) => props.columns}, minmax(0, 1fr));
   column-gap: 15px;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   padding: 25px;
+  height: calc(100vh - 219px);
 `;
 
 const FeedColumns = styled.div``;

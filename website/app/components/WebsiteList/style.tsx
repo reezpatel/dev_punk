@@ -1,9 +1,16 @@
 import styled from 'styled-components';
 
-const WebsiteContainer = styled.div`
+const WebsiteContainer = styled.div<{ visible: boolean }>`
   background-color: #f6f5fa;
   display: grid;
   grid-template-rows: 90px 1fr;
+  left: ${(prop) => (prop.visible ? '0' : '-300px')};
+  position: absolute;
+  width: 300px;
+  transition: all 0.3s linear;
+  top: 0;
+  bottom: 0;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 `;
 
 const WebsiteListContainer = styled.div`
