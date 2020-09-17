@@ -51,8 +51,8 @@ const CONFIG = {
   },
   ENDPOINTS,
   WEBSITE_IDS: {
-    ALL_WEBSITE: -1,
-    PINNED_WEBSITE: -2
+    ALL_WEBSITE: '-1',
+    PINNED_WEBSITE: '-2'
   }
 };
 

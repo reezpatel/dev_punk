@@ -17,8 +17,8 @@ const { ALL_WEBSITE, PINNED_WEBSITE } = CONFIG.WEBSITE_IDS;
 
 interface WebsiteListProps {
   websites: Website[];
-  selected: number;
-  onChange: (index: number) => void;
+  selected: string;
+  onChange: (id: string) => void;
   visible: boolean;
 }
 
@@ -30,8 +30,8 @@ const WebsiteList: WebsiteList = ({
   onChange,
   visible
 }) => {
-  const handleWebsiteSelection = (index) => () => {
-    onChange(index);
+  const handleWebsiteSelection = (id: string) => () => {
+    onChange(id);
   };
 
   const user = useUserContext();
@@ -111,11 +111,11 @@ const WebsiteList: WebsiteList = ({
         </WebsiteItem>
 
         {websiteList.length !== 0 &&
-          websiteList.map((website, index) => (
+          websiteList.map((website) => (
             <WebsiteItem
-              selected={index === selected}
+              selected={website._id === selected}
               key={website._id}
-              onClick={handleWebsiteSelection(index)}
+              onClick={handleWebsiteSelection(website._id)}
             >
               <WebsiteIcon src={CONFIG.ENDPOINTS.websiteIcon(website._id)} />
               <WebsiteText>{website.name}</WebsiteText>

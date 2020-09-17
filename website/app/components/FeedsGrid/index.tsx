@@ -19,8 +19,7 @@ const BATCH_SIZE = 2;
 const LOAD_OFFSET = 600;
 
 interface FeedsGridProps {
-  website: string;
-  selected: number;
+  selected: string;
   columns?: number;
   query: string;
 }
@@ -33,7 +32,7 @@ const getEmptyData = (columns: number) => {
     .map(() => []);
 };
 
-const FeedsGrid: FeedsGrid = ({ website, columns, selected, query }) => {
+const FeedsGrid: FeedsGrid = ({ columns, selected, query }) => {
   const [feeds, setFeeds] = useState<Feeds[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
@@ -59,7 +58,7 @@ const FeedsGrid: FeedsGrid = ({ website, columns, selected, query }) => {
     } else if (selected === CONFIG.WEBSITE_IDS.ALL_WEBSITE) {
       entries = await gql.getFeeds(page, '', query);
     } else {
-      entries = await gql.getFeeds(page, website, query);
+      entries = await gql.getFeeds(page, selected, query);
     }
 
     setPage(page + 1);
@@ -170,7 +169,7 @@ const FeedsGrid: FeedsGrid = ({ website, columns, selected, query }) => {
     setHasMore(true);
     setData(getEmptyData(columns));
     setPage(1);
-  }, [columns, website, selected, query, device]);
+  }, [columns, selected, query, device]);
 
   const handleFeedClick = (id: string) => () => {
     window.open(CONFIG.ENDPOINTS.redirect(id));

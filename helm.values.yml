@@ -26,6 +26,18 @@ securityContext:
 #   type: ClusterIP
 #   port: 80
 
+job:
+  name: 'feed-ingestion'
+  schedule: "0 */6 * * *"  
+  env: {}
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 3
+  successfulJobsHistoryLimit: 1
+  resources: {}
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+
 persistentVolume:
   enabled: true
 

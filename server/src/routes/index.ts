@@ -11,7 +11,7 @@ const routes = fp((fastify, options: { prefix: string }, next) => {
 
   fastify.register(authHandlers, { prefix: `${prefix}/auth` });
   fastify.register(imageHandlers, { prefix: `${prefix}/images` });
-  fastify.register(ingestionHandler, { prefix: `${prefix}/ingest` });
+  fastify.register(ingestionHandler, { prefix: `${prefix}/ingestion` });
   fastify.register(redirectHandler, { prefix: `${prefix}/r` });
   fastify.register(metricsHandler);
   fastify.register(publicHandler);

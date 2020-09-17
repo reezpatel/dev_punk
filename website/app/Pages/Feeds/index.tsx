@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Website } from '@devpunk/types';
 import { useDeviceContext } from '../../context';
 import { Header, WebsiteList, FeedsGrid, SearchBar } from '../../components';
-import { getFeedColumnCount, gql } from '../../utils';
+import { CONFIG, getFeedColumnCount, gql } from '../../utils';
 
 const Container = styled.div<{ isMenuVisible: boolean }>`
   padding-left: ${(prop) => (prop.isMenuVisible ? '300px' : '0')};
@@ -21,7 +21,7 @@ const FeedContainer = styled.div`
 const FeedsPage = (): JSX.Element => {
   const [showMenu, setShowMenu] = useState(false);
   const [websites, setWebsite] = useState<Website[]>([]);
-  const [selected, setSelected] = useState(-1);
+  const [selected, setSelected] = useState('');
   const [columns, setColumns] = useState(getFeedColumnCount());
   const [query, setQuery] = useState('');
   const device = useDeviceContext();
@@ -30,7 +30,7 @@ const FeedsPage = (): JSX.Element => {
     const sites = await gql.getAllWebsites();
 
     setWebsite(sites);
-    setSelected(-1);
+    setSelected(CONFIG.WEBSITE_IDS.ALL_WEBSITE);
   };
 
   const resizeListener = () => {
@@ -50,8 +50,8 @@ const FeedsPage = (): JSX.Element => {
     setShowMenu(device.device.type === 'DESKTOP');
   }, [device]);
 
-  const handleWebsiteSelection = (index) => {
-    setSelected(index);
+  const handleWebsiteSelection = (id: string) => {
+    setSelected(id);
     setQuery('');
     if (device.device.type !== 'DESKTOP') {
       setShowMenu(false);
@@ -85,12 +85,7 @@ const FeedsPage = (): JSX.Element => {
         <FeedContainer>
           <SearchBar value={query} onChange={handleQueryInput} />
 
-          <FeedsGrid
-            website={websites[selected]?._id}
-            columns={columns}
-            selected={selected}
-            query={query}
-          />
+          <FeedsGrid columns={columns} selected={selected} query={query} />
         </FeedContainer>
       </Container>
     </>
