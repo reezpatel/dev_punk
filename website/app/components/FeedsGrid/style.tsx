@@ -1,14 +1,18 @@
 import styled from 'styled-components';
 
-const FeedsContainer = styled.div<{ columns: number }>`
+const FeedWrapper = styled.div`
   margin-top: 20px;
+  position: relative;
+`;
+
+const FeedsContainer = styled.div<{ columns: number }>`
   display: grid;
   grid-template-columns: repeat(${(props) => props.columns}, minmax(0, 1fr));
   column-gap: 15px;
   overflow-y: scroll;
   overflow-x: hidden;
-  padding: 25px;
   height: calc(100vh - 219px);
+  padding: 25px;
 `;
 
 const FeedColumns = styled.div``;
@@ -60,7 +64,19 @@ const FeedMetaAction = styled.div`
   }
 `;
 
+const LoaderWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+`;
+
 export {
+  FeedWrapper,
   FeedsContainer,
   FeedColumns,
   FeedBlock,
@@ -69,5 +85,6 @@ export {
   FeedsTitle,
   FeedsMeta,
   FeedMetaTitle,
-  FeedMetaAction
+  FeedMetaAction,
+  LoaderWrapper
 };

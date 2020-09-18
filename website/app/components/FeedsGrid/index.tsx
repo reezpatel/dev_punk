@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { IoMdHeartEmpty, IoMdHeart } from 'react-icons/io';
 import { Feeds } from '@devpunk/types';
 import {
+  FeedWrapper,
   FeedsContainer,
   FeedColumns,
   FeedBlock,
@@ -10,8 +11,10 @@ import {
   FeedsTitle,
   FeedsMeta,
   FeedMetaTitle,
-  FeedMetaAction
+  FeedMetaAction,
+  LoaderWrapper
 } from './style';
+import { Loader } from '../UI';
 import { getRelativeTime, CONFIG, gql, colors } from '../../utils';
 import { useDeviceContext, useUserContext } from '../../context';
 
@@ -176,42 +179,49 @@ const FeedsGrid: FeedsGrid = ({ columns, selected, query }) => {
   };
 
   return (
-    <FeedsContainer
-      onScroll={handleOnScroll}
-      ref={(r) => {
-        containerRef.current = r;
-      }}
-      columns={columns}
-    >
-      {data.map((cols, index) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <FeedColumns key={index}>
-          {cols.map((feed) => (
-            <FeedBlock key={feed._id} onClick={handleFeedClick(feed._id)}>
-              <FeedImage src={CONFIG.ENDPOINTS.feedBanner(feed._id)} />
-              <FeedDetails>
-                <FeedsTitle>{feed.title}</FeedsTitle>
-                <FeedsMeta>
-                  <FeedMetaTitle>
-                    {getRelativeTime(feed.publishedAt || feed.createdAt)}
-                    {feed.author ? ` • ${feed.author}` : ''}
-                  </FeedMetaTitle>
-                  {user.user.isLoggedIn && (
-                    <FeedMetaAction onClick={handleHeartClick(feed)}>
-                      {favorites[feed._id] ? (
-                        <IoMdHeart color={colors.heartColor} />
-                      ) : (
-                        <IoMdHeartEmpty />
-                      )}
-                    </FeedMetaAction>
-                  )}
-                </FeedsMeta>
-              </FeedDetails>
-            </FeedBlock>
-          ))}
-        </FeedColumns>
-      ))}
-    </FeedsContainer>
+    <FeedWrapper>
+      {data.every((col) => col.length === 0) && (
+        <LoaderWrapper>
+          <Loader />
+        </LoaderWrapper>
+      )}
+      <FeedsContainer
+        onScroll={handleOnScroll}
+        ref={(r) => {
+          containerRef.current = r;
+        }}
+        columns={columns}
+      >
+        {data.map((cols, index) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <FeedColumns key={index}>
+            {cols.map((feed) => (
+              <FeedBlock key={feed._id} onClick={handleFeedClick(feed._id)}>
+                <FeedImage src={CONFIG.ENDPOINTS.feedBanner(feed._id)} />
+                <FeedDetails>
+                  <FeedsTitle>{feed.title}</FeedsTitle>
+                  <FeedsMeta>
+                    <FeedMetaTitle>
+                      {getRelativeTime(feed.publishedAt || feed.createdAt)}
+                      {feed.author ? ` • ${feed.author}` : ''}
+                    </FeedMetaTitle>
+                    {user.user.isLoggedIn && (
+                      <FeedMetaAction onClick={handleHeartClick(feed)}>
+                        {favorites[feed._id] ? (
+                          <IoMdHeart color={colors.heartColor} />
+                        ) : (
+                          <IoMdHeartEmpty />
+                        )}
+                      </FeedMetaAction>
+                    )}
+                  </FeedsMeta>
+                </FeedDetails>
+              </FeedBlock>
+            ))}
+          </FeedColumns>
+        ))}
+      </FeedsContainer>
+    </FeedWrapper>
   );
 };
 
