@@ -1,5 +1,4 @@
-import os from 'os';
-import kubemq from 'kubemq-nodejs';
+import RedisSMQ from 'rsmq';
 import fp from 'fastify-plugin';
 import { FastifyLoggerInstance } from 'fastify';
 import { IFeeds, IWebsite } from 'src/types/database';
@@ -8,23 +7,33 @@ import { RSSService } from '../rss';
 
 interface PubSubService {
   addFeed: (feed: IFeeds) => Promise<void>;
+  addWebsite: (website: IWebsite) => Promise<void>;
 }
 
-const MESSAGE_CHECK_DELAY = 300;
-const ONE = 1;
-const FIRST_MESSAGE = 0;
+const FEED_Q = 'devpunk_feeds';
+const IMAGE_Q = 'devpunk_image';
 
-const addFeed = (imageQueue, logger: FastifyLoggerInstance) => async (
+const EMPTY_OBJECT_LENGTH = 0;
+const MESSAGE_CHECK_DELAY = 700;
+
+const ensureQueue = async (rsmq: RedisSMQ, qname: string) => {
+  try {
+    await rsmq.createQueueAsync({ qname });
+
+    return true;
+  } catch {
+    return Promise.resolve(false);
+  }
+};
+
+const addFeed = (rsmq: RedisSMQ, logger: FastifyLoggerInstance) => async (
   feed: IFeeds
 ) => {
   try {
-    const message = new kubemq.Message(
-      feed.title,
-      kubemq.stringToByte(JSON.stringify(feed)),
-      []
-    );
-
-    await imageQueue.sendQueueMessage(message);
+    await rsmq.sendMessageAsync({
+      message: JSON.stringify(feed),
+      qname: IMAGE_Q
+    });
   } catch (e) {
     logger.error({
       message: e.message,
@@ -34,17 +43,14 @@ const addFeed = (imageQueue, logger: FastifyLoggerInstance) => async (
   }
 };
 
-const addWebsite = (feedsQueue, logger: FastifyLoggerInstance) => async (
+const addWebsite = (rsmq: RedisSMQ, logger: FastifyLoggerInstance) => async (
   website: IWebsite
 ) => {
   try {
-    const message = new kubemq.Message(
-      website.name,
-      kubemq.stringToByte(JSON.stringify(website)),
-      []
-    );
-
-    await feedsQueue.sendQueueMessage(message);
+    await rsmq.sendMessageAsync({
+      message: JSON.stringify(website),
+      qname: FEED_Q
+    });
   } catch (e) {
     logger.error({
       message: e.message,
@@ -55,88 +61,91 @@ const addWebsite = (feedsQueue, logger: FastifyLoggerInstance) => async (
 };
 
 const feedListener = async (
-  feedsQueue,
-  imageQueue,
+  rsmq: RedisSMQ,
   logger: FastifyLoggerInstance,
   rss: RSSService
 ) => {
-  const feeds = await feedsQueue.receiveQueueMessages(ONE, ONE);
+  const start = new Date();
+  const msg = await rsmq.receiveMessageAsync({ qname: FEED_Q });
 
-  if (feeds.Messages.length) {
-    const start = new Date();
-    const website: IWebsite = JSON.parse(
-      feeds.Messages[FIRST_MESSAGE].Body.toString()
-    );
-
-    logger.info({
-      message: `Started Processing Website: ${website.name}`,
-      module: 'PubSub:: Message Listener'
-    });
-
-    const insertedFeeds = await rss.getFeeds(website._id, website.feed);
-
-    const end = new Date();
-
-    logger.info({
-      message: `Finished Processing Website: ${website.name}`,
-      meta: {
-        count: insertedFeeds.length,
-        ids: insertedFeeds.map((feed) => {
-          addFeed(imageQueue, logger)(feed);
-
-          return feed._id;
-        }),
-        time: end.getTime() - start.getTime()
-      },
-      module: 'PubSub:: Message Listener'
-    });
+  if (Object.keys(msg).length === EMPTY_OBJECT_LENGTH) {
+    return;
   }
+
+  const { message, ...meta } = msg as RedisSMQ.QueueMessage;
+
+  const website: IWebsite = JSON.parse(message);
+
+  logger.info({
+    message: `Started Processing Website: ${website.name}`,
+    meta,
+    module: 'PubSub:: Message Listener'
+  });
+
+  const insertedFeeds = await rss.getFeeds(website._id, website.feed);
+  const end = new Date();
+
+  logger.info({
+    message: `Finished Processing Website: ${website.name}`,
+    meta: {
+      count: insertedFeeds.length,
+      ids: insertedFeeds.map((feed) => {
+        addFeed(rsmq, logger)(feed);
+
+        return feed._id;
+      }),
+      time: end.getTime() - start.getTime()
+    },
+    module: 'PubSub:: Message Listener'
+  });
 };
 
 const imageListener = async (
-  imageQueue,
+  rsmq: RedisSMQ,
   logger: FastifyLoggerInstance,
   storage: StorageService
 ) => {
-  const entries = await imageQueue.receiveQueueMessages(ONE, ONE);
+  const start = new Date();
+  const msg = await rsmq.receiveMessageAsync({ qname: IMAGE_Q });
 
-  if (entries.Messages.length) {
-    const start = new Date();
-    const feed: IFeeds = JSON.parse(
-      entries.Messages[FIRST_MESSAGE].Body.toString()
-    );
-
-    logger.info({
-      message: `Started Processing Feeds: ${feed.title}`,
-      module: 'PubSub:: Message Listener'
-    });
-
-    const success = await storage.saveFeedImage(feed._id, feed.url);
-
-    const end = new Date();
-
-    logger.info({
-      message: `Finished Processing Feeds: ${feed.title}`,
-      meta: {
-        success,
-        time: end.getTime() - start.getTime()
-      },
-      module: 'PubSub:: Message Listener'
-    });
+  if (Object.keys(msg).length === EMPTY_OBJECT_LENGTH) {
+    return;
   }
+
+  const { message, ...meta } = msg as RedisSMQ.QueueMessage;
+
+  const feed: IFeeds = JSON.parse(message);
+
+  logger.info({
+    message: `Started Processing Feeds: ${feed.title}`,
+    meta,
+    module: 'PubSub:: Message Listener'
+  });
+
+  const success = await storage.saveFeedImage(feed._id, feed.url);
+
+  const end = new Date();
+
+  logger.info({
+    message: `Finished Processing Feeds: ${feed.title}`,
+    meta: {
+      success,
+      time: end.getTime() - start.getTime()
+    },
+    module: 'PubSub:: Message Listener'
+  });
 };
 
 const attachMessageListener = (
-  feedsQueue,
-  imageQueue,
+  rsmq: RedisSMQ,
   logger: FastifyLoggerInstance,
   storage: StorageService,
   rss: RSSService
 ) => {
   const messageListener = async () => {
     try {
-      await feedListener(feedsQueue, imageQueue, logger, rss);
-      await imageListener(imageQueue, logger, storage);
+      await feedListener(rsmq, logger, rss);
+      await imageListener(rsmq, logger, storage);
     } catch (e) {
       logger.error({
         message: e.message,
@@ -151,27 +160,18 @@ const attachMessageListener = (
   messageListener();
 };
 
-const pubsub = fp((fastify, _, next) => {
-  const HOSTNAME = os.hostname();
-  const KUBEMQ_URI = fastify.config.KUBEMQ_HOST;
-  const FEED_Q = 'devpunk_feeds';
-  const IMAGE_Q = 'devpunk_image';
+const pubsub = fp(async (fastify, _, next) => {
+  const rsmq = new RedisSMQ({ host: '127.0.0.1', ns: 'devpunk', port: 6379 });
 
-  const feedsQueue = new kubemq.MessageQueue(KUBEMQ_URI, FEED_Q, HOSTNAME);
-  const imageQueue = new kubemq.MessageQueue(KUBEMQ_URI, IMAGE_Q, HOSTNAME);
+  await ensureQueue(rsmq, FEED_Q);
+  await ensureQueue(rsmq, IMAGE_Q);
 
   fastify.decorate('pubsub', {
-    addFeed: addFeed(imageQueue, fastify.log),
-    addWebsite: addWebsite(feedsQueue, fastify.log)
+    addFeed: addFeed(rsmq, fastify.log),
+    addWebsite: addWebsite(rsmq, fastify.log)
   });
 
-  attachMessageListener(
-    feedsQueue,
-    imageQueue,
-    fastify.log,
-    fastify.storage,
-    fastify.rss
-  );
+  attachMessageListener(rsmq, fastify.log, fastify.storage, fastify.rss);
 
   next();
 });
