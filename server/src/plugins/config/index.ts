@@ -11,7 +11,6 @@ interface Config {
   GITHUB_LOGIN_CLIENT_SECRET: string;
   APPLICATION_URL: string;
   REDIS_HOST: string;
-  KUBEMQ_HOST: string;
 }
 
 const schema = {
@@ -28,10 +27,6 @@ const schema = {
       type: 'string'
     },
     GITHUB_LOGIN_CLIENT_SECRET: {
-      type: 'string'
-    },
-    KUBEMQ_HOST: {
-      default: 'localhost:50000',
       type: 'string'
     },
     MONGODB_AUTH_DB: {

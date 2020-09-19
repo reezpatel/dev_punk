@@ -3,6 +3,7 @@ import { Config } from 'src/plugins/config';
 import { RSSService } from 'src/services/rss';
 import { RedisService } from 'src/services/redis';
 import { StorageService } from 'src/services/storage';
+import { PubSubService } from 'src/services/pubsub';
 
 declare module 'fastify' {
   export interface FastifyInstance<
@@ -13,10 +14,7 @@ declare module 'fastify' {
     config: Config;
     db: DBController;
     storage: StorageService;
-    pubsub: {
-      addWebsite: (IWebsite) => Promise<void>;
-      addFeed: (IFeeds) => Promise<void>;
-    };
+    pubsub: PubSubService;
     rss: RSSService;
     redis: RedisService;
   }
