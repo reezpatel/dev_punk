@@ -18,7 +18,7 @@ steps:
   - name: build-website
     image: node:lts-alpine
     commands:
-      - "APPLICATION_NAME=Devpunk API_SERVER_URL=https://www.devpunk.xyz NODE_ENV=production yarn workspace @devpunk/website build"
+      - "APPLICATION_NAME=Devpunk API_SERVER_URL=https://www.devpunk.io NODE_ENV=production yarn workspace @devpunk/website build"
   - name: build-server
     image: node:lts-alpine
     commands:
@@ -51,8 +51,8 @@ steps:
         from_secret: GITHUB_LOGIN_CLIENT_SECRET
       REDIS_HOST:
         from_secret: REDIS_HOST
-      KUBEMQ_HOST:
-        from_secret: KUBEMQ_HOST
+      ADMIN_USER:
+        from_secret: ADMIN_USER
     commands:
       - echo "$KUBECONFIG_FILE" > kubeconfig.b64
       - export KUBECONFIG="$PWD/kubeconfig.yml"
@@ -61,9 +61,9 @@ steps:
       - echo "$KUBECONFIG_FILE"
       - helm repo update
       - helm search repo dev
-      - helm upgrade --wait --install --atomic devpunk mychart/devpunk -n devpunk -f helm.values.yml --set-string image.tag="${DRONE_COMMIT:0:8}" --set-string env.MONGODB_PASSWORD="$MONGODB_PASSWORD" --set-string env.MONGODB_USERNAME="$MONGODB_USERNAME" --set-string env.MONGODB_HOST="$MONGODB_HOST" --set-string env.GITHUB_LOGIN_CLIENT_ID="$GITHUB_LOGIN_CLIENT_ID" --set-string env.GITHUB_LOGIN_CLIENT_SECRET="$GITHUB_LOGIN_CLIENT_SECRET" --set-string env.REDIS_HOST="$REDIS_HOST" --set-string env.KUBEMQ_HOST="$KUBEMQ_HOST"
-    # when:
-    #   event:
-    #     - promote
-    #   target:
-    #     - production
+      - helm upgrade --wait --install --atomic devpunk mychart/devpunk -n devpunk -f helm.values.yml --set-string image.tag="${DRONE_COMMIT:0:8}" --set-string env.MONGODB_PASSWORD="$MONGODB_PASSWORD" --set-string env.MONGODB_USERNAME="$MONGODB_USERNAME" --set-string env.MONGODB_HOST="$MONGODB_HOST" --set-string env.GITHUB_LOGIN_CLIENT_ID="$GITHUB_LOGIN_CLIENT_ID" --set-string env.GITHUB_LOGIN_CLIENT_SECRET="$GITHUB_LOGIN_CLIENT_SECRET" --set-string env.ADMIN_USER="$ADMIN_USER" --set-string env.REDIS_HOST="$REDIS_HOST" --set-string env.KUBEMQ_HOST="$KUBEMQ_HOST"
+    when:
+      event:
+        - promote
+      target:
+        - production
