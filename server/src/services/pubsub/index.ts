@@ -172,7 +172,11 @@ const attachMessageListener = (
 };
 
 const pubsub = fp(async (fastify, _, next) => {
-  const rsmq = new RedisSMQ({ host: '127.0.0.1', ns: 'devpunk', port: 6379 });
+  const rsmq = new RedisSMQ({
+    host: fastify.config.REDIS_HOST,
+    ns: 'devpunk',
+    port: 6379
+  });
 
   try {
     await ensureQueue(rsmq, FEED_Q, fastify.log);
