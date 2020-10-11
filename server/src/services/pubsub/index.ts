@@ -173,6 +173,8 @@ const pubsub = fp(async (fastify, _, next) => {
 
   attachMessageListener(rsmq, fastify.log, fastify.storage, fastify.rss);
 
+  fastify.log.info('Listening to messages...');
+
   next();
 });
 

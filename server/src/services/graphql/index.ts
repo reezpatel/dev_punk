@@ -116,6 +116,8 @@ const graphql = fp((fastify, _, next) => {
     schema
   });
 
+  fastify.log.info('Initialized GQL...');
+
   next();
 });
 

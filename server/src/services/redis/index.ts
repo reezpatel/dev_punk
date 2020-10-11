@@ -40,6 +40,8 @@ const redis = fp((fastify, _, next) => {
     keyPrefix: 'devpunk_'
   });
 
+  fastify.log.info(`Connected to redis on ${fastify.config.REDIS_HOST}`);
+
   fastify.decorate('redis', {
     destroyUserToken: destroyUserToken(instance),
     generateUserToken: generateUserToken(instance),
