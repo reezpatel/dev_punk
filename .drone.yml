@@ -10,19 +10,39 @@ steps:
     image: node:lts-alpine
     commands:
       - "yarn install -W"
+    when:
+      branch:
+      - master
+      event:
+      - push
   - name: lint
     image: node:lts-alpine
     commands:
       - "yarn lint:website"
       - "yarn lint:server"
+    when:
+      branch:
+      - master
+      event:
+      - push
   - name: build-website
     image: node:lts-alpine
     commands:
       - "APPLICATION_NAME=Devpunk API_SERVER_URL=https://www.devpunk.io NODE_ENV=production yarn workspace @devpunk/website build"
+    when:
+      branch:
+      - master
+      event:
+      - push
   - name: build-server
     image: node:lts-alpine
     commands:
       - "yarn workspace @devpunk/server build"
+    when:
+      branch:
+      - master
+      event:
+      - push
   - name: build-image
     image: plugins/docker
     settings:
@@ -34,6 +54,11 @@ steps:
       tags:
         - latest
         - ${DRONE_COMMIT:0:8}
+    when:
+      branch:
+      - master
+      event:
+      - push
   - name: deploy
     image: alpine/helm:3.2.1
     environment:
