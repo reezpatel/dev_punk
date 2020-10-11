@@ -28,17 +28,17 @@ server.register(cors, {
   origin: ['http://localhost:1234']
 });
 
-const EXIT_CODE = 1;
-
 const start = async () => {
   try {
     await server.ready();
     await server.listen(server.config.SERVER_PORT, '0.0.0.0');
     server.log.info(`Server is listening at ${server.config.SERVER_PORT}`);
   } catch (err) {
-    server.log.error(err);
-    // eslint-disable-next-line no-process-exit
-    process.exit(EXIT_CODE);
+    server.log.error({
+      message: err.message,
+      module: 'Main:: Failed to start server',
+      stack: err.stack
+    });
   }
 };
 

@@ -163,19 +163,25 @@ const attachMessageListener = (
 const pubsub = fp(async (fastify, _, next) => {
   const rsmq = new RedisSMQ({ host: '127.0.0.1', ns: 'devpunk', port: 6379 });
 
-  fastify.log.info('Starting message queue...');
-
-  await ensureQueue(rsmq, FEED_Q);
-  await ensureQueue(rsmq, IMAGE_Q);
+  try {
+    await ensureQueue(rsmq, FEED_Q);
+    await ensureQueue(rsmq, IMAGE_Q);
+  } catch (e) {
+    fastify.log.error({
+      error: 'Failed to ensure queue',
+      message: e.message,
+      stack: e.stack
+    });
+  }
 
   fastify.decorate('pubsub', {
     addFeed: addFeed(rsmq, fastify.log),
     addWebsite: addWebsite(rsmq, fastify.log)
   });
 
-  attachMessageListener(rsmq, fastify.log, fastify.storage, fastify.rss);
+  fastify.log.info('Starting message queue...');
 
-  fastify.log.info('Listening to messages...');
+  attachMessageListener(rsmq, fastify.log, fastify.storage, fastify.rss);
 
   next();
 });
