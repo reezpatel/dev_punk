@@ -1,5 +1,6 @@
 interface Config {
   ADMIN_USER: string;
+  INGESTION_KEY: string;
   MONGODB_PASSWORD: string;
   MONGODB_USERNAME: string;
   MONGODB_DB_NAME: string;
@@ -31,6 +32,9 @@ const schema = {
       type: 'string'
     },
     GITHUB_LOGIN_CLIENT_SECRET: {
+      type: 'string'
+    },
+    INGESTION_KEY: {
       type: 'string'
     },
     MONGODB_AUTH_DB: {
@@ -69,7 +73,8 @@ const schema = {
     'GITHUB_LOGIN_CLIENT_SECRET',
     'MONGODB_DB_NAME',
     'MONGODB_PASSWORD',
-    'MONGODB_USERNAME'
+    'MONGODB_USERNAME',
+    'INGESTION_KEY'
   ],
   type: 'object'
 };

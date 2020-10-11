@@ -54,31 +54,41 @@ const ingestionHandler: FastifyPluginCallback<Record<string, unknown>> = (
   _,
   next
 ) => {
-  fastify.get('/ingest', async (__, res) => {
-    const websites = await fastify.db.getAllWebsites();
+  fastify.get<{ Querystring: { token: string } }>(
+    '/ingest',
+    async (req, res) => {
+      if (req.query.token !== fastify.config.INGESTION_KEY) {
+        res.send({
+          message: 'Ingestion failed, request authorized',
+          success: false
+        });
+      }
 
-    if (!Array.isArray(websites)) {
-      fastify.log.error(websites.error);
+      const websites = await fastify.db.getAllWebsites();
+
+      if (!Array.isArray(websites)) {
+        fastify.log.error(websites.error);
+
+        res.send({
+          error: websites,
+          success: false
+        });
+
+        return;
+      }
+
+      const promises = websites.map((website) =>
+        fastify.pubsub.addWebsite(website)
+      );
+
+      await Promise.all(promises);
 
       res.send({
-        error: websites,
-        success: false
+        message: 'Ingestion has started',
+        success: true
       });
-
-      return;
     }
-
-    const promises = websites.map((website) =>
-      fastify.pubsub.addWebsite(website)
-    );
-
-    await Promise.all(promises);
-
-    res.send({
-      message: 'Ingestion has started',
-      success: true
-    });
-  });
+  );
 
   fastify.get('/sync', async (__, res) => {
     const msg = await imageSyncHandler(fastify.db, fastify.pubsub);
