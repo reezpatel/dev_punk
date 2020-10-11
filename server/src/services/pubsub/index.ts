@@ -22,7 +22,7 @@ const ensureQueue = async (
   logger: FastifyLoggerInstance
 ) => {
   try {
-    logger.info('Creating ${qname} queue...');
+    logger.info(`Creating ${qname} queue...`);
     await rsmq.createQueueAsync({ qname });
 
     return true;
