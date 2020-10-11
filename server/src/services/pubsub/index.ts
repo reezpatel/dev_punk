@@ -163,6 +163,8 @@ const attachMessageListener = (
 const pubsub = fp(async (fastify, _, next) => {
   const rsmq = new RedisSMQ({ host: '127.0.0.1', ns: 'devpunk', port: 6379 });
 
+  fastify.log.info('Starting message queue...');
+
   await ensureQueue(rsmq, FEED_Q);
   await ensureQueue(rsmq, IMAGE_Q);
 
