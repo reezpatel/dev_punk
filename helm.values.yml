@@ -47,8 +47,7 @@ persistentVolume:
     - ReadWriteOnce
 
   ##  Server data Persistent Volume annotations
-  annotations:
-    'helm.sh/resource-policy': keep
+  annotations: {}
 
   ## If you'd like to bring your own PVC for persisting state, pass the name of the
   ## created + ready PVC here. If set, this Chart will not create the default PVC.

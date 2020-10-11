@@ -16,12 +16,22 @@ const IMAGE_Q = 'devpunk_image';
 const EMPTY_OBJECT_LENGTH = 0;
 const MESSAGE_CHECK_DELAY = 700;
 
-const ensureQueue = async (rsmq: RedisSMQ, qname: string) => {
+const ensureQueue = async (
+  rsmq: RedisSMQ,
+  qname: string,
+  logger: FastifyLoggerInstance
+) => {
   try {
     await rsmq.createQueueAsync({ qname });
 
     return true;
-  } catch (_) {
+  } catch (e) {
+    logger.error({
+      message: e.message,
+      module: 'PubSub:: Ensure Feed',
+      stack: e.stack
+    });
+
     return Promise.resolve(false);
   }
 };
@@ -164,8 +174,8 @@ const pubsub = fp(async (fastify, _, next) => {
   const rsmq = new RedisSMQ({ host: '127.0.0.1', ns: 'devpunk', port: 6379 });
 
   try {
-    await ensureQueue(rsmq, FEED_Q);
-    await ensureQueue(rsmq, IMAGE_Q);
+    await ensureQueue(rsmq, FEED_Q, fastify.log);
+    await ensureQueue(rsmq, IMAGE_Q, fastify.log);
   } catch (e) {
     fastify.log.error({
       error: 'Failed to ensure queue',
@@ -174,12 +184,12 @@ const pubsub = fp(async (fastify, _, next) => {
     });
   }
 
+  fastify.log.info('Starting message queue...');
+
   fastify.decorate('pubsub', {
     addFeed: addFeed(rsmq, fastify.log),
     addWebsite: addWebsite(rsmq, fastify.log)
   });
-
-  fastify.log.info('Starting message queue...');
 
   attachMessageListener(rsmq, fastify.log, fastify.storage, fastify.rss);
 
