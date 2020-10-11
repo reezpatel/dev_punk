@@ -21,7 +21,7 @@ const ensureQueue = async (rsmq: RedisSMQ, qname: string) => {
     await rsmq.createQueueAsync({ qname });
 
     return true;
-  } catch {
+  } catch (_) {
     return Promise.resolve(false);
   }
 };
