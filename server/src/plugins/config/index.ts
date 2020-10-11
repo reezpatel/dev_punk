@@ -1,4 +1,5 @@
 interface Config {
+  ADMIN_USER: string;
   MONGODB_PASSWORD: string;
   MONGODB_USERNAME: string;
   MONGODB_DB_NAME: string;
@@ -15,6 +16,9 @@ interface Config {
 
 const schema = {
   properties: {
+    ADMIN_USER: {
+      type: 'string'
+    },
     APPLICATION_URL: {
       default: 'https://example.com/',
       type: 'string'
@@ -60,6 +64,7 @@ const schema = {
     }
   },
   required: [
+    'ADMIN_USER',
     'GITHUB_LOGIN_CLIENT_ID',
     'GITHUB_LOGIN_CLIENT_SECRET',
     'MONGODB_DB_NAME',

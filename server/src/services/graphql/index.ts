@@ -26,37 +26,35 @@ const queries = (db: DBController) => ({
   }
 });
 
-const mutations = (db: DBController) => ({
-  addWebsite(_, { website }) {
-    return db.addNewWebsite(website);
-  },
-  deleteFeed(_, { id }) {
-    return db.deleteFeed(id);
-  },
-  deleteWebsite(_, { id }) {
-    return db.deleteWebsite(id);
-  },
-  editWebsite(_, { website }) {
-    return db.editWebsite(website);
-  },
-  updateFavorites(_, { ids }, ctx) {
-    if (!ctx.isAuthenticated) {
-      return {
-        error: 'Unauthenticated Request'
-      };
-    }
-
-    return db.updateFavorites(ctx.id, ids);
-  },
-  updatePins(_, { ids }, ctx) {
-    if (!ctx.isAuthenticated) {
-      return {
-        error: 'Unauthenticated Request'
-      };
-    }
-
-    return db.updatePins(ctx.id, ids);
+const withAuth = (roles, cb) => (_, fields, ctx) => {
+  if (!ctx.isAuthenticated) {
+    return {
+      error: 'Unauthenticated Request'
+    };
   }
+
+  if (roles.find((role) => ctx.roles[role])) {
+    return {
+      error: 'Unauthorized Request'
+    };
+  }
+
+  return cb(_, fields, ctx);
+};
+
+const mutations = (db: DBController) => ({
+  addWebsite: withAuth(['ADMIN'], (_, { website }) =>
+    db.addNewWebsite(website)
+  ),
+  deleteFeed: withAuth(['ADMIN'], (_, { id }) => db.deleteFeed(id)),
+  deleteWebsite: withAuth(['ADMIN'], (_, { id }) => db.deleteWebsite(id)),
+  editWebsite: withAuth(['ADMIN'], (_, { website }) => db.editWebsite(website)),
+  updateFavorites: withAuth(['USER'], (_, { ids }, ctx) =>
+    db.updateFavorites(ctx.id, ids)
+  ),
+  updatePins: withAuth(['USER'], (_, { ids }, ctx) =>
+    db.updatePins(ctx.id, ids)
+  )
 });
 
 const loaders = (db: DBController) => ({
@@ -75,7 +73,7 @@ const loaders = (db: DBController) => ({
   }
 });
 
-const getContext = (redis: RedisService) => async (req) => {
+const getContext = (adminEmail: string, redis: RedisService) => async (req) => {
   if (
     !req.headers.authorization ||
     !req.headers.authorization.startsWith('Bearer ')
@@ -91,13 +89,16 @@ const getContext = (redis: RedisService) => async (req) => {
     'base64'
   ).toString('utf-8');
 
-  const [id, secret] = token.split(':');
+  const [id, secret, email] = token.split(':');
   const isAuthenticated = await redis.validateUserToken(id, secret);
 
   return {
     id,
     isAuthenticated,
-    roles: ['USER', 'ADMIN']
+    roles: {
+      ADMIN: adminEmail === email,
+      USER: true
+    }
   };
 };
 
@@ -108,7 +109,7 @@ const graphql = fp((fastify, _, next) => {
   };
 
   fastify.register(gql, {
-    context: getContext(fastify.redis),
+    context: getContext(fastify.config.ADMIN_USER, fastify.redis),
     graphiql: 'playground',
     loaders: loaders(fastify.db),
     resolvers,

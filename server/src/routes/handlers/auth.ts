@@ -85,7 +85,9 @@ const authHandlers: authHandlers = (fastify, _, next) => {
       const token = await fastify.redis.generateUserToken(authUser._id);
 
       res.send({
-        token: Buffer.from(`${authUser._id}:${token}`).toString('base64')
+        token: Buffer.from(
+          `${authUser._id}:${token}:${authUser.email}`
+        ).toString('base64')
       });
     } catch (e) {
       res.send(reply(false, '', `Error: ${e.message} ${e.stack}`));

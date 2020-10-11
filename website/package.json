@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "watch": "API_SERVER_URL=https://www.devpunk.xyz APPLICATION_NAME=devpunk parcel public/index.html",
+    "watch": "parcel public/index.html",
     "build": "parcel build public/index.html"
   },
   "dependencies": {

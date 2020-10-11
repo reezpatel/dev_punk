@@ -28,7 +28,7 @@ securityContext:
 
 job:
   name: 'feed-ingestion'
-  schedule: "0 */6 * * *"  
+  schedule: "0 */6 * * *"
   env: {}
   concurrencyPolicy: Forbid
   failedJobsHistoryLimit: 3
@@ -67,7 +67,7 @@ persistentVolume:
   ## If undefined (the default) or set to null, no storageClassName spec is
   ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
   ##   GKE, AWS & OpenStack)
-  storageClass: 'local-path'
+  storageClass: 'fast'
 
   ## Server data Persistent Volume Binding Mode
   ## If defined, volumeMode: <volumeMode>
@@ -85,7 +85,7 @@ ingress:
     kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: 'www.devpunk.xyz'
+    - host: 'www.devpunk.io'
       paths:
         - '/'
   tls: []
@@ -112,4 +112,4 @@ env:
   MONGODB_AUTH_DB: 'admin'
   MONGODB_PORT: '27017'
   DATA_DIR: /data
-  APPLICATION_URL: 'https://www.devpunk.xyz'
+  APPLICATION_URL: 'https://www.devpunk.io'
