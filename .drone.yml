@@ -15,10 +15,20 @@ steps:
       - master
       event:
       - push
-  - name: lint
+  - name: lint-website
     image: node:lts-alpine
     commands:
       - "yarn lint:website"
+    when:
+      branch:
+      - master
+      event:
+      - push
+    depends_on:
+    - build-cache
+  - name: lint-server
+    image: node:lts-alpine
+    commands:
       - "yarn lint:server"
     when:
       branch:
@@ -37,7 +47,8 @@ steps:
       event:
       - push
     depends_on:
-    - lint
+    - lint-website
+    - lint-server
   - name: build-server
     image: node:lts-alpine
     commands:
@@ -48,7 +59,8 @@ steps:
       event:
       - push
     depends_on:
-    - lint
+    - lint-website
+    - lint-server
   - name: build-image
     image: plugins/docker
     settings:
