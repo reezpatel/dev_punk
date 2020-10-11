@@ -27,12 +27,6 @@ const ensureQueue = async (
 
     return true;
   } catch (e) {
-    logger.error({
-      message: e.message,
-      module: 'PubSub:: Ensure Feed',
-      stack: e.stack
-    });
-
     return Promise.resolve(false);
   }
 };
@@ -188,8 +182,6 @@ const pubsub = fp(async (fastify, _, next) => {
       stack: e.stack
     });
   }
-
-  fastify.log.info('Starting message queue...');
 
   fastify.decorate('pubsub', {
     addFeed: addFeed(rsmq, fastify.log),

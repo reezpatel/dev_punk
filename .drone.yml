@@ -25,6 +25,8 @@ steps:
       - master
       event:
       - push
+    depends_on:
+    - build-cache
   - name: build-website
     image: node:lts-alpine
     commands:
@@ -34,6 +36,8 @@ steps:
       - master
       event:
       - push
+    depends_on:
+    - lint
   - name: build-server
     image: node:lts-alpine
     commands:
@@ -43,6 +47,8 @@ steps:
       - master
       event:
       - push
+    depends_on:
+    - lint
   - name: build-image
     image: plugins/docker
     settings:
@@ -59,6 +65,9 @@ steps:
       - master
       event:
       - push
+    depends_on:
+    - build-server
+    - build-website
   - name: deploy
     image: alpine/helm:3.2.1
     environment:
@@ -92,3 +101,5 @@ steps:
         - promote
       target:
         - production
+    depends_on:
+    - build-image
