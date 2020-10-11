@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "lint": "eslint .",
     "watch": "parcel public/index.html",
     "build": "parcel build public/index.html"
   },

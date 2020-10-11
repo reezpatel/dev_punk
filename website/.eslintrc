@@ -4,9 +4,18 @@
   "plugins": ["@typescript-eslint"],
   "extends": ["../.eslintrc", "airbnb-typescript-prettier"],
   "parserOptions": {
-    "project": "./website/tsconfig.json"
+    "project": "./website/tsconfig.json",
+    "ecmaFeatures": {
+      "tsx": true
+    }
   },
   "rules": {
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "no-use-before-define": 0
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   }
 }
