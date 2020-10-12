@@ -1,9 +1,17 @@
+import { createReadStream } from 'fs';
+import { join } from 'path';
 import { Readable } from 'stream';
 import AWS from 'aws-sdk';
 import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
 import axios from 'axios';
 import { getFeedImageUrl } from '../../utils';
 import StorageService from './interface';
+
+const DEFAULT_WEBSITE_LOGO_PATH = join(__dirname, './../../../assets/logo.png');
+const DEFAULT_FEED_BANNER_PATH = join(
+  __dirname,
+  './../../../assets/banner.png'
+);
 
 const SUCCESS_RESPONSE_CODE = 200;
 
@@ -38,10 +46,17 @@ const saveFeedImage = (
 
       if (res.status === SUCCESS_RESPONSE_CODE) {
         await uploadFile(s3, bucket, res.data, id);
-
-        return id;
       }
+    } else {
+      await uploadFile(
+        s3,
+        bucket,
+        createReadStream(DEFAULT_FEED_BANNER_PATH),
+        id
+      );
     }
+
+    return id;
   } catch (e) {
     logger.error({
       message: e.message,
@@ -57,10 +72,19 @@ const saveWebsiteImage = (s3: AWS.S3, bucket: string) => async (
   id: string,
   data: string
 ) => {
-  const index = data.indexOf(',');
-  const buffer = Buffer.from(data.substring(index), 'base64');
+  if (data) {
+    const index = data.indexOf(',');
+    const buffer = Buffer.from(data.substring(index), 'base64');
 
-  await uploadFile(s3, bucket, Readable.from(buffer), id);
+    await uploadFile(s3, bucket, Readable.from(buffer), id);
+  } else {
+    await uploadFile(
+      s3,
+      bucket,
+      createReadStream(DEFAULT_WEBSITE_LOGO_PATH),
+      id
+    );
+  }
 
   return id;
 };

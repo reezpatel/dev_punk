@@ -32,7 +32,9 @@ const imageHandlers: FastifyPluginCallback<Record<string, unknown>> = (
   fastify.get<{ Params: { id: string } }>('/website/:id', (req, res) => {
     const { id } = req.params;
 
-    if (fastify.config.S3_BUCKET_NAME) {
+    if (id === 'pins' || id === 'all') {
+      res.send(createReadStream(DEFAULT_WEBSITE_LOGO_PATH));
+    } else if (fastify.config.S3_BUCKET_NAME) {
       res.redirect(
         TEMP_REDIRECT_CODE,
         `https://${fastify.config.S3_BUCKET_NAME}.${fastify.config.S3_BUCKET_REGION}/${id}`
