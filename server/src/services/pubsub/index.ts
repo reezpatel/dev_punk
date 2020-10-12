@@ -2,7 +2,7 @@ import RedisSMQ from 'rsmq';
 import fp from 'fastify-plugin';
 import { FastifyLoggerInstance } from 'fastify';
 import { IFeeds, IWebsite } from 'src/types/database';
-import { StorageService } from '../storage';
+import StorageService from '../storage/interface';
 import { RSSService } from '../rss';
 
 interface PubSubService {
@@ -16,13 +16,8 @@ const IMAGE_Q = 'devpunk_image';
 const EMPTY_OBJECT_LENGTH = 0;
 const MESSAGE_CHECK_DELAY = 700;
 
-const ensureQueue = async (
-  rsmq: RedisSMQ,
-  qname: string,
-  logger: FastifyLoggerInstance
-) => {
+const ensureQueue = async (rsmq: RedisSMQ, qname: string) => {
   try {
-    logger.info(`Creating ${qname} queue...`);
     await rsmq.createQueueAsync({ qname });
 
     return true;
@@ -173,8 +168,8 @@ const pubsub = fp(async (fastify, _, next) => {
   });
 
   try {
-    await ensureQueue(rsmq, FEED_Q, fastify.log);
-    await ensureQueue(rsmq, IMAGE_Q, fastify.log);
+    await ensureQueue(rsmq, FEED_Q);
+    await ensureQueue(rsmq, IMAGE_Q);
   } catch (e) {
     fastify.log.error({
       error: 'Failed to ensure queue',

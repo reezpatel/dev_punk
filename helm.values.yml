@@ -39,7 +39,7 @@ job:
   tolerations: {}
 
 persistentVolume:
-  enabled: true
+  enabled: false
 
   ## Server data Persistent Volume access modes
   ## Must match those of existing PV or dynamic provisioner

@@ -101,6 +101,14 @@ steps:
         from_secret: ADMIN_USER
       INGESTION_KEY:
         from_secret: INGESTION_KEY
+      AWS_ACCESS_KEY_ID:
+        from_secret: AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY:
+        from_secret: AWS_SECRET_ACCESS_KEY
+      S3_BUCKET_REGION:
+        from_secret: S3_BUCKET_REGION
+      S3_BUCKET_NAME:
+        from_secret: S3_BUCKET_NAME
     commands:
       - echo "$KUBECONFIG_FILE" > kubeconfig.b64
       - export KUBECONFIG="$PWD/kubeconfig.yml"
@@ -109,7 +117,7 @@ steps:
       - echo "$KUBECONFIG_FILE"
       - helm repo update
       - helm search repo dev
-      - helm upgrade --install devpunk mychart/devpunk -n devpunk -f helm.values.yml --set-string image.tag="${DRONE_COMMIT:0:8}" --set-string env.MONGODB_PASSWORD="$MONGODB_PASSWORD" --set-string env.MONGODB_USERNAME="$MONGODB_USERNAME" --set-string env.MONGODB_HOST="$MONGODB_HOST" --set-string env.GITHUB_LOGIN_CLIENT_ID="$GITHUB_LOGIN_CLIENT_ID" --set-string env.GITHUB_LOGIN_CLIENT_SECRET="$GITHUB_LOGIN_CLIENT_SECRET" --set-string env.ADMIN_USER="$ADMIN_USER" --set-string env.REDIS_HOST="$REDIS_HOST" --set-string env.INGESTION_KEY="$INGESTION_KEY"
+      - helm upgrade --install devpunk mychart/devpunk -n devpunk -f helm.values.yml --set-string image.tag="${DRONE_COMMIT:0:8}" --set-string env.MONGODB_PASSWORD="$MONGODB_PASSWORD" --set-string env.MONGODB_USERNAME="$MONGODB_USERNAME" --set-string env.MONGODB_HOST="$MONGODB_HOST" --set-string env.GITHUB_LOGIN_CLIENT_ID="$GITHUB_LOGIN_CLIENT_ID" --set-string env.GITHUB_LOGIN_CLIENT_SECRET="$GITHUB_LOGIN_CLIENT_SECRET" --set-string env.ADMIN_USER="$ADMIN_USER" --set-string env.REDIS_HOST="$REDIS_HOST" --set-string env.INGESTION_KEY="$INGESTION_KEY" --set-string env.AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" --set-string env.AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" --set-string env.S3_BUCKET_REGION="$S3_BUCKET_REGION" --set-string env.S3_BUCKET_NAME="S3_BUCKET_NAME"
     when:
       event:
         - promote

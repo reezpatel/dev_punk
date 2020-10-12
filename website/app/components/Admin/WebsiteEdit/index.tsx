@@ -103,8 +103,8 @@ const WebsiteEdit: WebsiteEdit = ({ onClose, website: _website, editMode }) => {
 
   const handleSaveButtonClicked = () => {
     const promise = editMode
-      ? gql.editWebsite(website)
-      : gql.addNewWebsite(website);
+      ? gql.editWebsite(window.localStorage.getItem('AUTH_TOKEN'), website)
+      : gql.addNewWebsite(window.localStorage.getItem('AUTH_TOKEN'), website);
 
     setView('LOADING');
     promise

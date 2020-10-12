@@ -33,7 +33,7 @@ const withAuth = (roles, cb) => (_, fields, ctx) => {
     };
   }
 
-  if (roles.find((role) => ctx.roles[role])) {
+  if (!roles.find((role) => ctx.roles[role])) {
     return {
       error: 'Unauthorized Request'
     };

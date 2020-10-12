@@ -82,7 +82,7 @@ const FeedsList: FeedsList = ({ website }) => {
 
   const handleFeedsDelete = (feed: Feeds) => () => {
     gql
-      .deleteFeed(feed._id)
+      .deleteFeed(window.localStorage.getItem('AUTH_TOKEN'), feed._id)
       .then((res) => {
         if (res.success) {
           setFeeds(feeds.filter(({ _id }) => _id !== feed._id));
