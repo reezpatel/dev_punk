@@ -64,7 +64,7 @@ const AdminPage = (): JSX.Element => {
 
   const handleWebsiteDelete = (website: Website) => {
     gql
-      .deleteWebsite(website._id)
+      .deleteWebsite(window.localStorage.getItem('AUTH_TOKEN'), website._id)
       .then((res) => {
         if (res.success) {
           loadWebsites();

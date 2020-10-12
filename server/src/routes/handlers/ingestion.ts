@@ -58,10 +58,10 @@ const ingestionHandler: FastifyPluginCallback<Record<string, unknown>> = (
     '/ingest',
     async (req, res) => {
       if (req.query.token !== fastify.config.INGESTION_KEY) {
-        res.send({
+        return {
           message: 'Ingestion failed, request authorized',
           success: false
-        });
+        };
       }
 
       const websites = await fastify.db.getAllWebsites();
@@ -69,12 +69,10 @@ const ingestionHandler: FastifyPluginCallback<Record<string, unknown>> = (
       if (!Array.isArray(websites)) {
         fastify.log.error(websites.error);
 
-        res.send({
+        return {
           error: websites,
           success: false
-        });
-
-        return;
+        };
       }
 
       const promises = websites.map((website) =>
@@ -83,10 +81,10 @@ const ingestionHandler: FastifyPluginCallback<Record<string, unknown>> = (
 
       await Promise.all(promises);
 
-      res.send({
+      return {
         message: 'Ingestion has started',
         success: true
-      });
+      };
     }
   );
 

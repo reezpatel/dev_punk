@@ -7,6 +7,8 @@ interface Config {
   MONGODB_AUTH_DB: string;
   MONGODB_HOST: string;
   MONGODB_PORT: number;
+  S3_BUCKET_REGION: string;
+  S3_BUCKET_NAME: string;
   DATA_DIR: string;
   SERVER_PORT: number;
   GITHUB_LOGIN_CLIENT_ID: string;
@@ -60,6 +62,12 @@ const schema = {
     },
     REDIS_HOST: {
       default: 'localhost',
+      type: 'string'
+    },
+    S3_BUCKET_NAME: {
+      type: 'string'
+    },
+    S3_BUCKET_REGION: {
       type: 'string'
     },
     SERVER_PORT: {

@@ -90,28 +90,66 @@ const getFeeds = async (
   });
 };
 
-const addNewWebsite = async (website: Website): Promise<Website> => {
-  return executeMutation<Website>(ADD_WEBSITE_MUTATION, {
-    website
-  });
+const addNewWebsite = async (
+  token: string,
+  website: Website
+): Promise<Website> => {
+  return executeMutation<Website>(
+    ADD_WEBSITE_MUTATION,
+    {
+      website
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 };
 
-const editWebsite = async (website: Website): Promise<Website> => {
-  return executeMutation<Website>(EDIT_WEBSITE_MUTATION, {
-    website
-  });
+const editWebsite = async (
+  token: string,
+  website: Website
+): Promise<Website> => {
+  return executeMutation<Website>(
+    EDIT_WEBSITE_MUTATION,
+    {
+      website
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 };
 
-const deleteWebsite = async (id: string): Promise<Website> => {
-  return executeMutation<Website>(DELETE_WEBSITE_MUTATION, {
-    id
-  });
+const deleteWebsite = async (token: string, id: string): Promise<Website> => {
+  return executeMutation<Website>(
+    DELETE_WEBSITE_MUTATION,
+    {
+      id
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 };
 
-const deleteFeed = async (id: string): Promise<Feeds> => {
-  return executeMutation<Feeds>(DELETE_FEED_MUTATION, {
-    id
-  });
+const deleteFeed = async (token: string, id: string): Promise<Feeds> => {
+  return executeMutation<Feeds>(
+    DELETE_FEED_MUTATION,
+    {
+      id
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
+  );
 };
 
 const getUser = async (token: string): Promise<User> => {

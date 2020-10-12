@@ -8,6 +8,8 @@ const DEFAULT_FEED_BANNER_PATH = join(
   './../../../assets/banner.png'
 );
 
+const TEMP_REDIRECT_CODE = 307;
+
 interface WebsitePutBody {
   id: string;
   image: string;
@@ -29,16 +31,32 @@ const imageHandlers: FastifyPluginCallback<Record<string, unknown>> = (
 
   fastify.get<{ Params: { id: string } }>('/website/:id', (req, res) => {
     const { id } = req.params;
-    const path = fastify.storage.getWebsiteImage(id);
 
-    res.send(createReadStream(path || DEFAULT_WEBSITE_LOGO_PATH));
+    if (fastify.config.S3_BUCKET_NAME) {
+      res.redirect(
+        TEMP_REDIRECT_CODE,
+        `https://${fastify.config.S3_BUCKET_NAME}.${fastify.config.S3_BUCKET_REGION}/${id}`
+      );
+    } else {
+      const path = fastify.storage.getWebsiteImage(id);
+
+      res.send(createReadStream(path || DEFAULT_WEBSITE_LOGO_PATH));
+    }
   });
 
   fastify.get<{ Params: { id: string } }>('/feeds/:id', (req, res) => {
     const { id } = req.params;
-    const path = fastify.storage.getFeedImage(id);
 
-    res.send(createReadStream(path || DEFAULT_FEED_BANNER_PATH));
+    if (fastify.config.S3_BUCKET_NAME) {
+      res.redirect(
+        TEMP_REDIRECT_CODE,
+        `https://${fastify.config.S3_BUCKET_NAME}.${fastify.config.S3_BUCKET_REGION}/${id}`
+      );
+    } else {
+      const path = fastify.storage.getFeedImage(id);
+
+      res.send(createReadStream(path || DEFAULT_FEED_BANNER_PATH));
+    }
   });
 
   next();
