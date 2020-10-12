@@ -54,39 +54,36 @@ const ingestionHandler: FastifyPluginCallback<Record<string, unknown>> = (
   _,
   next
 ) => {
-  fastify.get<{ Querystring: { token: string } }>(
-    '/ingest',
-    async (req, res) => {
-      if (req.query.token !== fastify.config.INGESTION_KEY) {
-        return {
-          message: 'Ingestion failed, request authorized',
-          success: false
-        };
-      }
-
-      const websites = await fastify.db.getAllWebsites();
-
-      if (!Array.isArray(websites)) {
-        fastify.log.error(websites.error);
-
-        return {
-          error: websites,
-          success: false
-        };
-      }
-
-      const promises = websites.map((website) =>
-        fastify.pubsub.addWebsite(website)
-      );
-
-      await Promise.all(promises);
-
+  fastify.get<{ Querystring: { token: string } }>('/ingest', async (req) => {
+    if (req.query.token !== fastify.config.INGESTION_KEY) {
       return {
-        message: 'Ingestion has started',
-        success: true
+        message: 'Ingestion failed, request authorized',
+        success: false
       };
     }
-  );
+
+    const websites = await fastify.db.getAllWebsites();
+
+    if (!Array.isArray(websites)) {
+      fastify.log.error(websites.error);
+
+      return {
+        error: websites,
+        success: false
+      };
+    }
+
+    const promises = websites.map((website) =>
+      fastify.pubsub.addWebsite(website)
+    );
+
+    await Promise.all(promises);
+
+    return {
+      message: 'Ingestion has started',
+      success: true
+    };
+  });
 
   fastify.get('/sync', async (__, res) => {
     const msg = await imageSyncHandler(fastify.db, fastify.pubsub);
