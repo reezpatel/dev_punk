@@ -66,7 +66,7 @@ const feedListener = async (
   rss: RSSService
 ) => {
   const start = new Date();
-  const msg = await rsmq.receiveMessageAsync({ qname: FEED_Q });
+  const msg = await rsmq.popMessageAsync({ qname: FEED_Q });
 
   if (Object.keys(msg).length === EMPTY_OBJECT_LENGTH) {
     return;
@@ -106,7 +106,7 @@ const imageListener = async (
   storage: StorageService
 ) => {
   const start = new Date();
-  const msg = await rsmq.receiveMessageAsync({ qname: IMAGE_Q });
+  const msg = await rsmq.popMessageAsync({ qname: IMAGE_Q });
 
   if (Object.keys(msg).length === EMPTY_OBJECT_LENGTH) {
     return;
