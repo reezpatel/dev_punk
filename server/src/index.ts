@@ -2,6 +2,7 @@ import { IncomingMessage, Server, ServerResponse } from 'http';
 import cors from 'fastify-cors';
 import fastifyEnv from 'fastify-env';
 import fastify, { FastifyInstance } from 'fastify';
+import metrics from 'fastify-metrics';
 import { database, graphql, storage, rss, redis, pubsub } from './services';
 import config from './plugins/config';
 import routes from './routes';
@@ -15,6 +16,7 @@ const server: FastifyInstance<
   pluginTimeout: 1000000
 });
 
+server.register(metrics, { endpoint: '/metrics' });
 server.register(fastifyEnv, config);
 server.register(storage);
 server.register(database);

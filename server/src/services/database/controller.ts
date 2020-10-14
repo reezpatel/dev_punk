@@ -69,6 +69,24 @@ class DBController {
     }
   }
 
+  ping(): Promise<boolean> {
+    const status = mongoose.STATES[mongoose.connection.readyState];
+
+    if (status === 'connected') {
+      return Promise.resolve(true);
+    }
+
+    this.logger.error({
+      message: 'DB connection is down',
+      meta: {
+        status
+      },
+      module: 'DBController'
+    });
+
+    return Promise.resolve(false);
+  }
+
   async addNewWebsite(website: Website): Promise<Website | ErrorResponse> {
     try {
       const doc = await this.Websites.findOne({ feed: website.feed });
