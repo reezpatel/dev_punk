@@ -2,7 +2,7 @@ import fp from 'fastify-plugin';
 import authHandlers from './handlers/auth';
 import imageHandlers from './handlers/images';
 import ingestionHandler from './handlers/ingestion';
-import metricsHandler from './handlers/metrics';
+import livenessHandler from './handlers/liveness';
 import redirectHandler from './handlers/redirect';
 import publicHandler from './handlers/public';
 
@@ -13,7 +13,7 @@ const routes = fp((fastify, options: { prefix: string }, next) => {
   fastify.register(imageHandlers, { prefix: `${prefix}/images` });
   fastify.register(ingestionHandler, { prefix: `${prefix}/ingestion` });
   fastify.register(redirectHandler, { prefix: `${prefix}/r` });
-  fastify.register(metricsHandler);
+  fastify.register(livenessHandler);
   fastify.register(publicHandler);
 
   next();

@@ -10,6 +10,7 @@ interface RedisService {
   destroyUserToken: destroyUserToken;
   generateUserToken: generateUserToken;
   validateUserToken: validateUserToken;
+  ping: () => Promise<boolean>;
 }
 
 const generateUserToken: (instance: Redis.Redis) => generateUserToken = (
@@ -43,6 +44,21 @@ const redis = fp((fastify, _, next) => {
   fastify.decorate('redis', {
     destroyUserToken: destroyUserToken(instance),
     generateUserToken: generateUserToken(instance),
+    ping: () => {
+      if (instance.status !== 'ready') {
+        fastify.log.error({
+          message: 'Redis connection is down',
+          meta: {
+            status: instance.status
+          },
+          module: 'DBController'
+        });
+
+        return Promise.resolve(false);
+      }
+
+      return Promise.resolve(true);
+    },
     validateUserToken: validateUserToken(instance)
   });
 
