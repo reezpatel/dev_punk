@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint .",
     "watch": "parcel public/index.html",
-    "build": "parcel build public/index.html"
+    "build": "parcel build public/index.html --experimental-scope-hoisting"
   },
   "dependencies": {
     "@devpunk/types": "1.0.0",
