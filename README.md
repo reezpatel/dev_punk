@@ -4,11 +4,11 @@
 
 Source of Daily Tech News &bull; [https://www.devpunk.io](https://www.devpunk.io)
 
--- screen --
+![Devpunk Screen](https://raw.githubusercontent.com/reezpatel/dev_punk/master/assets/screen.png)
 
 ## Introduction
 
-Devpunk is a Self Hosted RSS Reader written with [React](https://reactjs.org/) and [NodeJS](https://nodejs.org). It provides a user interface of managing feeds. It also provides a [GraphQL](https://graphql.org/) API to connect to other 3rd party clients.
+<img align="left" width="80" height="80" src="https://raw.githubusercontent.com/reezpatel/dev_punk/master/server/assets/logo.png"> Devpunk is a Self Hosted RSS Reader written with [React](https://reactjs.org/) and [NodeJS](https://nodejs.org). It provides a user interface of managing feeds. It also provides a [GraphQL](https://graphql.org/) API to connect to other 3rd party clients.
 
 Checkout the demo [here](https://devpunk.io).
 
@@ -45,4 +45,4 @@ Checkout the demo [here](https://devpunk.io).
 
 ## License
 
-Devpunk is licensed under the GPL-3.0 License. (See LICENSE)
+Devpunk is licensed under the GPL-3.0 License. (See [LICENSE](https://github.com/reezpatel/dev_punk/blob/master/LICENSE))
