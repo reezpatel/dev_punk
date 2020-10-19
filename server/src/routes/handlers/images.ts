@@ -46,20 +46,23 @@ const imageHandlers: FastifyPluginCallback<Record<string, unknown>> = (
     }
   });
 
-  fastify.get<{ Params: { id: string } }>('/feeds/:id', (req, res) => {
-    const { id } = req.params;
+  fastify.get<{ Params: { id: string; type: string } }>(
+    '/feeds/:type/:id',
+    (req, res) => {
+      const { type, id } = req.params;
 
-    if (fastify.config.S3_BUCKET_NAME) {
-      res.redirect(
-        TEMP_REDIRECT_CODE,
-        `https://${fastify.config.S3_BUCKET_NAME}.${fastify.config.S3_BUCKET_REGION}/${id}`
-      );
-    } else {
-      const path = fastify.storage.getFeedImage(id);
+      if (fastify.config.S3_BUCKET_NAME) {
+        res.redirect(
+          TEMP_REDIRECT_CODE,
+          `https://${fastify.config.S3_BUCKET_NAME}.${fastify.config.S3_BUCKET_REGION}/feed/${type}/${id}`
+        );
+      } else {
+        const path = fastify.storage.getFeedImage(id);
 
-      res.send(createReadStream(path || DEFAULT_FEED_BANNER_PATH));
+        res.send(createReadStream(path || DEFAULT_FEED_BANNER_PATH));
+      }
     }
-  });
+  );
 
   next();
 };

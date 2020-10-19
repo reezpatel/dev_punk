@@ -40,6 +40,7 @@ const FeedsSchema = new Schema({
   },
   author: String,
   createdAt: String,
+  image: String,
   publishedAt: String,
   tags: [String],
   title: { index: true, type: String },

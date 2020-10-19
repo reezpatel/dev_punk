@@ -181,6 +181,34 @@ class DBController {
     }
   }
 
+  async getFeedsWithoutImage(page: number): Promise<IFeeds[] | ErrorResponse> {
+    try {
+      return await this.Feeds.find({ image: { $exists: false } })
+        .sort({ publishedAt: -1 })
+        .limit(RPP)
+        .skip((page - DELTA) * RPP);
+    } catch (e) {
+      return this.handleError(e);
+    }
+  }
+
+  async addImageToFeed(
+    id: string,
+    image: string
+  ): Promise<boolean | ErrorResponse> {
+    try {
+      const feed = await this.Feeds.findOne({ _id: id });
+
+      feed.image = image;
+
+      await this.Feeds.updateOne({ _id: id }, feed);
+
+      return true;
+    } catch (e) {
+      return this.handleError(e);
+    }
+  }
+
   async resolveFeedsToWebsite(feeds: IFeeds[]): Promise<Website[]> {
     const ids = feeds.map(
       ({ website }) => new mongoose.Types.ObjectId(website)

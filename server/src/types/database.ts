@@ -19,6 +19,7 @@ interface IFeeds extends Document {
   author: string;
   tags: string[];
   website: string;
+  image: string;
 }
 
 interface IUser extends Document {

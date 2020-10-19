@@ -25,6 +25,7 @@ const GET_PAGINATED_FEEDS_QUERY = gql`
       createdAt
       publishedAt
       author
+      image
       website {
         name
         _id

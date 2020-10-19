@@ -28,6 +28,7 @@ type Feed {
   author: String
   tags: [String!]
   website: Website
+  image: String
 }
 
 type User {

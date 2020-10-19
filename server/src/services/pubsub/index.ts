@@ -4,6 +4,7 @@ import { FastifyLoggerInstance } from 'fastify';
 import { IFeeds, IWebsite } from 'src/types/database';
 import StorageService from '../storage/interface';
 import { RSSService } from '../rss';
+import DBController from '../database/controller';
 
 interface PubSubService {
   addFeed: (feed: IFeeds) => Promise<void>;
@@ -101,6 +102,7 @@ const feedListener = async (
 };
 
 const imageListener = async (
+  db: DBController,
   rsmq: RedisSMQ,
   logger: FastifyLoggerInstance,
   storage: StorageService
@@ -113,7 +115,6 @@ const imageListener = async (
   }
 
   const { message, ...meta } = msg as RedisSMQ.QueueMessage;
-
   const feed: IFeeds = JSON.parse(message);
 
   logger.info({
@@ -122,14 +123,15 @@ const imageListener = async (
     module: 'PubSub:: Message Listener'
   });
 
-  const success = await storage.saveFeedImage(feed._id, feed.url);
-
+  const image = await storage.saveFeedImage(feed._id, feed.url);
   const end = new Date();
+
+  await db.addImageToFeed(feed._id, image);
 
   logger.info({
     message: `Finished Processing Feeds: ${feed.title}`,
     meta: {
-      success,
+      image,
       time: end.getTime() - start.getTime()
     },
     module: 'PubSub:: Message Listener'
@@ -137,6 +139,7 @@ const imageListener = async (
 };
 
 const attachMessageListener = (
+  db: DBController,
   rsmq: RedisSMQ,
   logger: FastifyLoggerInstance,
   storage: StorageService,
@@ -145,7 +148,7 @@ const attachMessageListener = (
   const messageListener = async () => {
     try {
       await feedListener(rsmq, logger, rss);
-      await imageListener(rsmq, logger, storage);
+      await imageListener(db, rsmq, logger, storage);
     } catch (e) {
       logger.error({
         message: e.message,
@@ -183,7 +186,13 @@ const pubsub = fp(async (fastify, _, next) => {
     addWebsite: addWebsite(rsmq, fastify.log)
   });
 
-  attachMessageListener(rsmq, fastify.log, fastify.storage, fastify.rss);
+  attachMessageListener(
+    fastify.db,
+    rsmq,
+    fastify.log,
+    fastify.storage,
+    fastify.rss
+  );
 
   next();
 });

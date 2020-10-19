@@ -31,9 +31,13 @@ const imageSyncHandler = async (db: DBController, pubsub: PubSubService) => {
   try {
     while (hasNext) {
       // eslint-disable-next-line no-await-in-loop
-      const feeds = await db.getFeeds(page, '', '');
+      const feeds = await db.getFeedsWithoutImage(page);
 
-      hasNext = processImages(feeds, pubsub);
+      if (!Array.isArray(feeds) || !feeds.length) {
+        hasNext = false;
+      }
+
+      processImages(feeds, pubsub);
       page += NEXT_PAGE;
     }
   } catch (e) {
@@ -85,7 +89,7 @@ const ingestionHandler: FastifyPluginCallback<Record<string, unknown>> = (
     };
   });
 
-  fastify.get('/sync', async (__, res) => {
+  fastify.get('/sync-image', async (__, res) => {
     const msg = await imageSyncHandler(fastify.db, fastify.pubsub);
 
     res.send(msg);

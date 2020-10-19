@@ -19,6 +19,7 @@ interface Feeds {
   website: Website;
   url?: string;
   success?: boolean;
+  image: string;
 }
 
 interface User {

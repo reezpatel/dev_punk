@@ -197,7 +197,9 @@ const FeedsGrid: FeedsGrid = ({ columns, selected, query }) => {
           <FeedColumns key={index}>
             {cols.map((feed) => (
               <FeedBlock key={feed._id} onClick={handleFeedClick(feed._id)}>
-                <FeedImage src={CONFIG.ENDPOINTS.feedBanner(feed._id)} />
+                {feed.image && (
+                  <FeedImage src={CONFIG.ENDPOINTS.feedBanner(feed.image)} />
+                )}
                 <FeedDetails>
                   <FeedsTitle>{feed.title}</FeedsTitle>
                   <FeedsMeta>

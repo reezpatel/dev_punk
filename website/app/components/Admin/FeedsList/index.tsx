@@ -108,7 +108,9 @@ const FeedsList: FeedsList = ({ website }) => {
         feeds.map((feed) => (
           <FeedsContainer key={feed._id}>
             <Row size="2fr 8fr 1fr" gap="20px">
-              <FeedsImage src={CONFIG.ENDPOINTS.feedBanner(feed._id)} />
+              {feed.image && (
+                <FeedsImage src={CONFIG.ENDPOINTS.feedBanner(feed.image)} />
+              )}
               <FeedDetails>
                 <FeedTitle>{feed.title}</FeedTitle>
 

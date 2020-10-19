@@ -1,21 +1,20 @@
-import { createReadStream } from 'fs';
+import { createReadStream, createWriteStream, unlinkSync } from 'fs';
 import { join } from 'path';
 import { Readable } from 'stream';
 import AWS from 'aws-sdk';
 import { FastifyInstance, FastifyLoggerInstance } from 'fastify';
 import axios from 'axios';
+import sharp from 'sharp';
+import mime from 'mime';
 import { getFeedImageUrl } from '../../utils';
 import StorageService from './interface';
 
 const DEFAULT_WEBSITE_LOGO_PATH = join(__dirname, './../../../assets/logo.png');
-const DEFAULT_FEED_BANNER_PATH = join(
-  __dirname,
-  './../../../assets/banner.png'
-);
 
 const SUCCESS_RESPONSE_CODE = 200;
+const RESIZED_IMAGE = 120;
 
-const uploadFile = (
+const storeFileToBucket = (
   s3: AWS.S3,
   bucket: string,
   stream: Readable,
@@ -27,6 +26,48 @@ const uploadFile = (
         reject(err);
       } else {
         resolve(data);
+      }
+    });
+  });
+
+const uploadFile = (
+  logger: FastifyLoggerInstance,
+  s3: AWS.S3,
+  bucket: string,
+  file: string,
+  stream: Readable
+) =>
+  new Promise((resolve, reject) => {
+    const tmpFile = join('/tmp', file);
+    const writer = createWriteStream(tmpFile);
+
+    stream.pipe(writer);
+
+    writer.on('close', async () => {
+      try {
+        await storeFileToBucket(
+          s3,
+          bucket,
+          createReadStream(tmpFile),
+          `feed/full/${file}`
+        );
+        const smallImage = await sharp(tmpFile)
+          .resize(RESIZED_IMAGE)
+          .toBuffer();
+
+        await storeFileToBucket(s3, bucket, smallImage, `feed/small/${file}`);
+
+        unlinkSync(tmpFile);
+
+        resolve(file);
+      } catch (e) {
+        logger.error({
+          message: e.message,
+          module: 'Image:: Add Feed Icon',
+          stack: e.stack
+        });
+
+        reject(e);
       }
     });
   });
@@ -43,20 +84,18 @@ const saveFeedImage = (
       const res = await axios.get(imageUrl, {
         responseType: 'stream'
       });
+      const extension = mime.getExtension(res.headers['content-type']);
 
       if (res.status === SUCCESS_RESPONSE_CODE) {
-        await uploadFile(s3, bucket, res.data, id);
+        await uploadFile(logger, s3, bucket, `${id}.${extension}`, res.data);
+      } else {
+        throw new Error(`Image Not Found => ${res.status}`);
       }
-    } else {
-      await uploadFile(
-        s3,
-        bucket,
-        createReadStream(DEFAULT_FEED_BANNER_PATH),
-        id
-      );
+
+      return `${id}.${extension}`;
     }
 
-    return id;
+    return '';
   } catch (e) {
     logger.error({
       message: e.message,
@@ -76,9 +115,9 @@ const saveWebsiteImage = (s3: AWS.S3, bucket: string) => async (
     const index = data.indexOf(',');
     const buffer = Buffer.from(data.substring(index), 'base64');
 
-    await uploadFile(s3, bucket, Readable.from(buffer), id);
+    await storeFileToBucket(s3, bucket, Readable.from(buffer), id);
   } else {
-    await uploadFile(
+    await storeFileToBucket(
       s3,
       bucket,
       createReadStream(DEFAULT_WEBSITE_LOGO_PATH),

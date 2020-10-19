@@ -11,6 +11,8 @@
   ],
   "rules": {
     "import/no-unresolved": 0,
-    "max-params": [2, 6]
+    "max-params": [2, 6],
+    "max-statements": 0,
+    "max-lines-per-function": 0
   }
 }
