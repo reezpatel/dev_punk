@@ -18,6 +18,7 @@ const getFeeds = (db: DBController) => async (id, url) => {
     _id: new mongoose.Types.ObjectId(),
     author: item?.creator ?? '',
     createdAt: now,
+    image: '',
     publishedAt: item.pubDate ? new Date(item.pubDate).toISOString() : now,
     tags: item?.categories ?? [],
     title: item?.title ?? '',
