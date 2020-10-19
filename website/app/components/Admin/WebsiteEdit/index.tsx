@@ -57,7 +57,9 @@ const WebsiteEdit: WebsiteEdit = ({ onClose, website: _website, editMode }) => {
       return;
     }
 
-    const response = await fetch(CONFIG.ENDPOINTS.websiteIcon(_website._id));
+    const response = await fetch(
+      CONFIG.ENDPOINTS.websiteIcon(_website.hasImage ? _website._id : 'default')
+    );
 
     setImage(await convertBlobToBase64(await response.blob()));
   };
@@ -103,8 +105,14 @@ const WebsiteEdit: WebsiteEdit = ({ onClose, website: _website, editMode }) => {
 
   const handleSaveButtonClicked = () => {
     const promise = editMode
-      ? gql.editWebsite(window.localStorage.getItem('AUTH_TOKEN'), website)
-      : gql.addNewWebsite(window.localStorage.getItem('AUTH_TOKEN'), website);
+      ? gql.editWebsite(window.localStorage.getItem('AUTH_TOKEN'), {
+          ...website,
+          hasImage: !!image
+        })
+      : gql.addNewWebsite(window.localStorage.getItem('AUTH_TOKEN'), {
+          ...website,
+          hasImage: !!image
+        });
 
     setView('LOADING');
     promise

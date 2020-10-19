@@ -117,7 +117,11 @@ const WebsiteList: WebsiteList = ({
               key={website._id}
               onClick={handleWebsiteSelection(website._id)}
             >
-              <WebsiteIcon src={CONFIG.ENDPOINTS.websiteIcon(website._id)} />
+              <WebsiteIcon
+                src={CONFIG.ENDPOINTS.websiteIcon(
+                  website.hasImage ? website._id : 'default'
+                )}
+              />
               <WebsiteText>{website.name}</WebsiteText>
               {user.user.isLoggedIn && (
                 <WebsiteAction onClick={handleButtonPin(website)}>

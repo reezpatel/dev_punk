@@ -7,6 +7,7 @@ interface Website {
   feed: string;
   active: boolean;
   success?: boolean;
+  hasImage?: boolean;
 }
 
 interface Feeds {

@@ -8,6 +8,7 @@ type Website {
   feed: String
   active: Boolean
   error: String
+  hasImage: Boolean
 }
 
 input IWebsite {
@@ -18,6 +19,7 @@ input IWebsite {
   order: Int!
   feed: String!
   active: Boolean!
+  hasImage: Boolean
 }
 
 type Feed {

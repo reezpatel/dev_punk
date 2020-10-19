@@ -56,7 +56,11 @@ const AdminWebsites: AdminWebsites = ({
               onClick={handleWebsiteClick(index)}
             >
               <WebsiteImageContainer>
-                <WebsiteImage src={CONFIG.ENDPOINTS.websiteIcon(site._id)} />
+                <WebsiteImage
+                  src={CONFIG.ENDPOINTS.websiteIcon(
+                    site.hasImage ? site._id : 'default'
+                  )}
+                />
               </WebsiteImageContainer>
 
               <WebsiteDetailsContainer>

@@ -8,6 +8,7 @@ interface IWebsite extends Document {
   order: string;
   feed: string;
   active: boolean;
+  hasImage: boolean;
 }
 
 interface IFeeds extends Document {

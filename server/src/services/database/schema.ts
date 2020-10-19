@@ -12,6 +12,9 @@ const WebsiteSchema = new Schema({
     unique: [true, 'Website with provided feed already exist'],
     validate: [URL_REGEX, 'Feed URL is invalid']
   },
+  hasImage: {
+    type: Boolean
+  },
   name: {
     index: true,
     type: String,
