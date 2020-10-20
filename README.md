@@ -2,7 +2,7 @@
 
 [![Build Status](https://ci.rlab.app/api/badges/reezpatel/dev_punk/status.svg)](https://ci.rlab.app/reezpatel/dev_punk)
 
-Source of Daily Tech News &bull; [https://www.devpunk.io](https://www.devpunk.io)
+Source of Daily Tech News &bull; **[https://www.devpunk.io](https://www.devpunk.io)**
 
 ![Devpunk Screen](https://raw.githubusercontent.com/reezpatel/dev_punk/master/assets/screen.png)
 
