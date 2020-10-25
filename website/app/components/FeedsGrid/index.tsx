@@ -6,20 +6,20 @@ import {
   FeedsContainer,
   FeedColumns,
   FeedBlock,
-  FeedImage,
   FeedDetails,
   FeedsTitle,
   FeedsMeta,
   FeedMetaTitle,
   FeedMetaAction,
-  LoaderWrapper
+  LoaderWrapper,
+  NoResultHint
 } from './style';
 import { Loader } from '../UI';
 import { getRelativeTime, CONFIG, gql, colors } from '../../utils';
 import { useDeviceContext, useUserContext } from '../../context';
 
 const BATCH_SIZE = 2;
-const LOAD_OFFSET = 600;
+const LOAD_OFFSET = 1200;
 
 interface FeedsGridProps {
   selected: string;
@@ -180,9 +180,14 @@ const FeedsGrid: FeedsGrid = ({ columns, selected, query }) => {
 
   return (
     <FeedWrapper>
-      {data.every((col) => col.length === 0) && (
+      {hasMore && data.every((col) => col.length === 0) && (
         <LoaderWrapper>
           <Loader />
+        </LoaderWrapper>
+      )}
+      {!hasMore && data.every((col) => col.length === 0) && (
+        <LoaderWrapper>
+          <NoResultHint>It&apos;s lonely here...</NoResultHint>
         </LoaderWrapper>
       )}
       <FeedsContainer
@@ -190,15 +195,17 @@ const FeedsGrid: FeedsGrid = ({ columns, selected, query }) => {
         ref={(r) => {
           containerRef.current = r;
         }}
-        columns={columns}
       >
         {data.map((cols, index) => (
           // eslint-disable-next-line react/no-array-index-key
-          <FeedColumns key={index}>
+          <FeedColumns columns={columns} key={index}>
             {cols.map((feed) => (
               <FeedBlock key={feed._id} onClick={handleFeedClick(feed._id)}>
                 {feed.image && (
-                  <FeedImage src={CONFIG.ENDPOINTS.feedBanner(feed.image)} />
+                  <progressive-image
+                    src={CONFIG.ENDPOINTS.feedBanner(feed.image)}
+                    thumbnail={CONFIG.ENDPOINTS.smallFeedBanner(feed.image)}
+                  />
                 )}
                 <FeedDetails>
                   <FeedsTitle>{feed.title}</FeedsTitle>

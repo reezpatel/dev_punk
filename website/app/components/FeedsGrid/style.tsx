@@ -5,28 +5,27 @@ const FeedWrapper = styled.div`
   position: relative;
 `;
 
-const FeedsContainer = styled.div<{ columns: number }>`
-  display: grid;
-  grid-template-columns: repeat(${(props) => props.columns}, minmax(0, 1fr));
+const FeedsContainer = styled.div`
   column-gap: 15px;
   overflow-y: scroll;
   overflow-x: hidden;
   height: calc(100vh - 219px);
-  padding: 25px;
+  padding: 25px 15px 25px 15px;
 `;
 
-const FeedColumns = styled.div``;
+const FeedColumns = styled.div<{ columns: number }>`
+  width: calc(100% / ${(props) => props.columns});
+  display: inline-block;
+  vertical-align: top;
+  box-sizing: border-box;
+  padding: 10px;
+`;
 
 const FeedBlock = styled.div`
   background-color: #f6f5fa;
   margin-bottom: 15px;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-`;
-
-const FeedImage = styled.img`
-  width: 100%;
-  min-height: 120px;
 `;
 
 const FeedDetails = styled.div`
@@ -75,16 +74,20 @@ const LoaderWrapper = styled.div`
   align-content: center;
 `;
 
+const NoResultHint = styled.span`
+  color: #909090;
+`;
+
 export {
   FeedWrapper,
   FeedsContainer,
   FeedColumns,
   FeedBlock,
-  FeedImage,
   FeedDetails,
   FeedsTitle,
   FeedsMeta,
   FeedMetaTitle,
   FeedMetaAction,
-  LoaderWrapper
+  LoaderWrapper,
+  NoResultHint
 };

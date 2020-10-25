@@ -11,6 +11,7 @@ const GET_ALL_WEBSITE_QUERY = gql`
       order
       active
       type
+      hasImage
     }
   }
 `;

@@ -6,7 +6,7 @@ const Bar = styled.div`
   background-color: #f6f5fa;
   padding: 15px 20px;
   display: grid;
-  grid-template-columns: 30px 1fr 30px;
+  grid-template-columns: 30px 1fr 30px 30px;
   border-radius: 25px;
   align-items: center;
   justify-items: center;

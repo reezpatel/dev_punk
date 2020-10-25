@@ -1,9 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference types="react" />
+import * as React from 'react';
 
 declare module '*.svg' {
-  import * as React from 'react';
-
   export const ReactComponent: React.FunctionComponent<
     React.SVGProps<SVGSVGElement> & { title?: string }
   >;
@@ -40,4 +39,18 @@ declare module '*.png' {
 declare module '*.webp' {
   const src: string;
   export default src;
+}
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'progressive-image': ProgressiveImageElementAttributes;
+    }
+
+    interface ProgressiveImageElementAttributes {
+      src: string;
+      thumbnail: string;
+      blur?: number | string;
+    }
+  }
 }

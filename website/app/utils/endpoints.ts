@@ -3,6 +3,8 @@ const BASE_URL = process.env.API_SERVER_URL || '';
 const ENDPOINTS = {
   websiteIcon: (id: string): string =>
     `${BASE_URL}/api/v1/images/website/${id}`,
+  smallFeedBanner: (id: string): string =>
+    `${BASE_URL}/api/v1/images/feeds/small/${id}`,
   feedBanner: (id: string): string =>
     `${BASE_URL}/api/v1/images/feeds/full/${id}`,
   redirect: (id: string): string => `${BASE_URL}/api/v1/r/${id}`,
