@@ -3,6 +3,10 @@ import styled from 'styled-components';
 const FeedWrapper = styled.div`
   margin-top: 20px;
   position: relative;
+
+  @media screen and (max-width: 600px) {
+    margin-top: 0px;
+  }
 `;
 
 const FeedsContainer = styled.div`
@@ -11,6 +15,11 @@ const FeedsContainer = styled.div`
   overflow-x: hidden;
   height: calc(100vh - 219px);
   padding: 25px 15px 25px 15px;
+
+  @media screen and (max-width: 600px) {
+    padding: 0 10px;
+    height: calc(100vh - 148px);
+  }
 `;
 
 const FeedColumns = styled.div<{ columns: number }>`

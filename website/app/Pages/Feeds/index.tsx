@@ -16,6 +16,10 @@ const FeedContainer = styled.div`
   overflow: hidden;
   display: grid;
   grid-template-rows: 80px 1fr;
+
+  @media screen and (max-width: 600px) {
+    grid-template-rows: 70px 1fr;
+  }
 `;
 
 const FeedsPage = (): JSX.Element => {
@@ -72,10 +76,7 @@ const FeedsPage = (): JSX.Element => {
         showMenuIcon={device.device.type !== 'DESKTOP'}
         onMenuClick={onMenuClicked}
       />
-      <Container
-        data-device-type={device.device.type}
-        isMenuVisible={device.device.type === 'DESKTOP'}
-      >
+      <Container isMenuVisible={device.device.type === 'DESKTOP'}>
         <WebsiteList
           onChange={handleWebsiteSelection}
           selected={selected}
@@ -83,7 +84,7 @@ const FeedsPage = (): JSX.Element => {
           visible={showMenu}
         />
         <FeedContainer>
-          <SearchBar value={query} onChange={handleQueryInput} />
+          <SearchBar onChange={handleQueryInput} />
 
           <FeedsGrid columns={columns} selected={selected} query={query} />
         </FeedContainer>

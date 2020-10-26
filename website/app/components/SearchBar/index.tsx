@@ -11,7 +11,7 @@ interface SearchBarProps {
 type SearchBar = (props: SearchBarProps) => JSX.Element;
 
 const SearchBar: SearchBar = ({ onChange }): JSX.Element => {
-  const [input, setInput] = useState('ewfwefew');
+  const [input, setInput] = useState('');
 
   const handleInput = (e) => {
     setInput(e.target.value);

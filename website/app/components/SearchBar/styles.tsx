@@ -13,6 +13,11 @@ const Bar = styled.div`
   column-gap: 15px;
   max-width: 720px;
   margin: 25px;
+
+  @media screen and (max-width: 600px) {
+    margin: 10px;
+    padding: 12px 15px;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -22,6 +27,10 @@ const SearchInput = styled.input`
   background: none;
   font-size: 18px;
   color: #5f575e;
+
+  @media screen and (max-width: 600px) {
+    font-size: 14px;
+  }
 `;
 
 export { SearchContainer, Bar, SearchInput };

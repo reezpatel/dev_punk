@@ -1954,10 +1954,10 @@ bluebird@3.5.1:
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.1.tgz#d9551f9de98f1fcda1e683d17ee91a0602ee2eb9"
   integrity sha512-MKiLiV+I1AA596t9w1sQJ8jkiSr5+ZKi0WKrYGUn6d1Fx+Ij4tIj+m2WMQSGczs5jZVxV339chE8iwk6F64wjA==
 
-blur-progressive-image@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/blur-progressive-image/-/blur-progressive-image-0.0.1.tgz#16d2c8341b58c79451cb637991abf5039a172886"
-  integrity sha512-EMJQXAE318JVcH47uyZuCLCB75AEuYn2+2eHgJEI/Ohnx0pR9nMpDK04tR0wsKU/aa+DVv97t0PcMkt+sReSvw==
+blur-progressive-image@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/blur-progressive-image/-/blur-progressive-image-0.1.0.tgz#ec781ac06d9e9170572f1999a7bde17924649a04"
+  integrity sha512-aNvgT/3hHwgDi15BPa//HU8PQAx6IO/2HK1O3MlJU5t6pu0BVnB5IdxA3E9yHeBW41nr4DbJG74ghBIaa0itqg==
   dependencies:
     stackblur-canvas "^2.4.0"
 
