@@ -89,11 +89,21 @@ const ingestionHandler: FastifyPluginCallback<Record<string, unknown>> = (
     };
   });
 
-  fastify.get('/sync-image', async (__, res) => {
-    const msg = await imageSyncHandler(fastify.db, fastify.pubsub);
+  fastify.get<{ Querystring: { token: string } }>(
+    '/sync-image',
+    async (req) => {
+      if (req.query.token !== fastify.config.INGESTION_KEY) {
+        return {
+          message: 'Ingestion failed, request authorized',
+          success: false
+        };
+      }
 
-    res.send(msg);
-  });
+      const msg = await imageSyncHandler(fastify.db, fastify.pubsub);
+
+      return msg;
+    }
+  );
 
   next();
 };

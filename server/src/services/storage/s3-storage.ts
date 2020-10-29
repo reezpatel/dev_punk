@@ -132,7 +132,10 @@ const saveWebsiteImage = (s3: AWS.S3, bucket: string) => async (
 };
 
 const getS3StoragePlugin = (fastify: FastifyInstance): StorageService => {
-  const s3 = new AWS.S3({ endpoint: fastify.config.S3_BUCKET_REGION });
+  const s3 = new AWS.S3({
+    endpoint: fastify.config.S3_BUCKET_REGION,
+    s3ForcePathStyle: true
+  });
 
   return {
     getFeedImage: () => '',

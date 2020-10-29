@@ -183,7 +183,7 @@ class DBController {
 
   async getFeedsWithoutImage(page: number): Promise<IFeeds[] | ErrorResponse> {
     try {
-      return await this.Feeds.find({ image: { $exists: false } })
+      return await this.Feeds.find({ image: '' })
         .sort({ publishedAt: -1 })
         .limit(RPP)
         .skip((page - DELTA) * RPP);
