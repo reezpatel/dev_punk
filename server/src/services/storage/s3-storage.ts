@@ -21,13 +21,16 @@ const storeFileToBucket = (
   name: string
 ) =>
   new Promise((resolve, reject) => {
-    s3.upload({ Body: stream, Bucket: bucket, Key: name }, (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
+    s3.upload(
+      { ACL: 'public-read', Body: stream, Bucket: bucket, Key: name },
+      (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
       }
-    });
+    );
   });
 
 const uploadFile = (
